@@ -20,7 +20,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #000000;
             color: #ffffff;
             overflow: hidden;
@@ -39,7 +39,6 @@
             align-items: center;
             z-index: 1000;
             cursor: pointer;
-            transition: opacity 0.8s ease;
         }
 
         .entry-content {
@@ -47,23 +46,20 @@
         }
 
         .entry-text {
-            font-size: 64px;
+            font-size: 52px;
             font-weight: 300;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             color: #ffffff;
-            opacity: 0.9;
             text-transform: uppercase;
         }
 
         .entry-hint {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.3);
             margin-top: 20px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: 0;
-            animation: fadeIn 2s ease 1s forwards;
         }
 
         #mainContent {
@@ -72,8 +68,6 @@
             width: 100%;
             min-height: 100vh;
             overflow: hidden;
-            opacity: 0;
-            transition: opacity 0.6s ease;
         }
 
         .gif-bg {
@@ -83,9 +77,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.08;
+            opacity: 0.06;
             pointer-events: none;
-            filter: grayscale(100%) contrast(120%) blur(3px);
+            filter: grayscale(100%) contrast(120%) blur(1px);
             z-index: 1;
         }
 
@@ -97,33 +91,29 @@
             justify-content: center;
             align-items: center;
             z-index: 10;
-            perspective: 1200px;
+            perspective: 1000px;
         }
 
-        .large-frame {
+        .clean-frame {
             position: relative;
-            width: 850px;
-            height: 500px;
-            background: rgba(20, 20, 20, 0.1);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            width: 700px;
+            height: 350px;
+            background: rgba(15, 15, 15, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 0px;
             transform-style: preserve-3d;
-            opacity: 0;
-            transform: translateY(30px) perspective(1200px) rotateY(0) rotateX(0);
-            transition: opacity 0.6s ease, transform 0.6s ease;
             cursor: default;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .frame-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
+            gap: 40px;
             width: 100%;
             height: 100%;
-            padding: 50px;
+            padding: 40px;
         }
 
         .left-column {
@@ -132,56 +122,56 @@
         }
 
         .profile-section {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .profile-header {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .profile-image {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             filter: grayscale(100%) contrast(120%);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .profile-image:hover {
-            transform: scale(1.05);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.03);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .profile-text h1 {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 300;
             color: #ffffff;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-family: 'Courier New', monospace;
-            min-height: 38px;
-            letter-spacing: 1px;
+            min-height: 28px;
+            letter-spacing: 0.5px;
         }
 
         .profile-text p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 1px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .bio-section {
-            font-size: 16px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 25px;
         }
 
         .bio-line {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .accounts-section {
@@ -189,41 +179,39 @@
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.25);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
         }
 
         .account-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            padding: 12px;
+            margin-bottom: 10px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(255, 255, 255, 0.7);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .account-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(3px);
         }
 
         .account-item::before {
             content: ">";
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 11px;
         }
 
         .right-column {
@@ -235,41 +223,40 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .server-item {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            transition: all 0.3s ease;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            transition: all 0.2s ease;
             cursor: pointer;
             flex: 1;
         }
 
         .server-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
         }
 
         .server-icon {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(30, 30, 30, 0.4);
+            background: rgba(25, 25, 25, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.25);
             flex-shrink: 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             overflow: hidden;
         }
 
@@ -279,36 +266,36 @@
         }
 
         .server-name {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 400;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .server-members {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.3px;
         }
 
         .server-join {
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 20px;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 16px;
             flex-shrink: 0;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .server-item:hover .server-join {
-            color: rgba(255, 255, 255, 0.6);
-            transform: translateX(5px);
+            color: rgba(255, 255, 255, 0.4);
+            transform: translateX(3px);
         }
 
         .frame-footer {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -316,26 +303,21 @@
         }
 
         .footer-text {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.15);
-            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.1);
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
         .cursor {
             display: inline-block;
-            width: 3px;
-            height: 1.2em;
+            width: 2px;
+            height: 1em;
             background: #ffffff;
-            margin-left: 3px;
+            margin-left: 2px;
             animation: blink 1s infinite;
             vertical-align: middle;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         @keyframes blink {
@@ -343,53 +325,53 @@
             50% { opacity: 0; }
         }
 
-        @media (max-width: 900px) {
-            .large-frame {
+        @media (max-width: 750px) {
+            .clean-frame {
                 width: 90%;
                 height: auto;
-                min-height: 500px;
-                margin: 30px;
+                min-height: 400px;
+                margin: 25px;
             }
             
             .frame-content {
                 grid-template-columns: 1fr;
-                gap: 40px;
-                padding: 40px;
+                gap: 30px;
+                padding: 30px;
             }
             
             .entry-text {
-                font-size: 48px;
+                font-size: 42px;
             }
         }
 
-        @media (max-width: 600px) {
-            .large-frame {
+        @media (max-width: 500px) {
+            .clean-frame {
                 width: 95%;
                 height: auto;
-                min-height: 600px;
+                min-height: 450px;
             }
             
             .frame-content {
-                padding: 30px;
-                gap: 30px;
+                padding: 25px;
+                gap: 25px;
             }
             
             .profile-image {
-                width: 60px;
-                height: 60px;
+                width: 50px;
+                height: 50px;
             }
             
             .profile-text h1 {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .server-item {
-                padding: 15px;
+                padding: 12px;
             }
             
             .server-icon {
-                width: 40px;
-                height: 40px;
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -406,7 +388,7 @@
         <img src="https://raw.githubusercontent.com/ikiikikikijujijij-oss/encode/refs/heads/main/life.gif" alt="" class="gif-bg" loading="eager" decoding="async">
         
         <div class="main-container">
-            <div class="large-frame" id="largeFrame">
+            <div class="clean-frame" id="cleanFrame">
                 <div class="frame-content">
                     <div class="left-column">
                         <div class="profile-section">
@@ -475,7 +457,7 @@
     <script>
         const entryScreen = document.getElementById('entryScreen');
         const mainContent = document.getElementById('mainContent');
-        const largeFrame = document.getElementById('largeFrame');
+        const cleanFrame = document.getElementById('cleanFrame');
         const bgAudio = document.getElementById('bgAudio');
         const typewriterName = document.getElementById('typewriterName');
         
@@ -577,7 +559,7 @@
             
             const iconElement = serverElement.querySelector('.server-icon');
             if (guild.icon) {
-                const iconUrl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`;
+                const iconUrl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=96`;
                 iconElement.style.backgroundImage = `url('${iconUrl}')`;
                 iconElement.style.backgroundSize = 'cover';
                 iconElement.innerHTML = '';
@@ -585,7 +567,7 @@
                 const initials = guild.name 
                     ? guild.name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2)
                     : '??';
-                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.3); font-size: 16px;">${initials}</div>`;
+                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.25); font-size: 14px;">${initials}</div>`;
             }
             
             serverElement.onclick = () => window.open(inviteUrl, '_blank');
@@ -616,27 +598,21 @@
                 const deltaX = mouseX - centerX;
                 const deltaY = mouseY - centerY;
                 
-                const rotateY = (deltaX / centerX) * 6;
-                const rotateX = (deltaY / centerY) * -6;
-                const moveX = (deltaX / centerX) * 30;
-                const moveY = (deltaY / centerY) * 30;
+                const rotateY = (deltaX / centerX) * 5;
+                const rotateX = (deltaY / centerY) * -5;
+                const moveX = (deltaX / centerX) * 20;
+                const moveY = (deltaY / centerY) * 20;
                 
-                largeFrame.style.transform = `
-                    perspective(1200px)
+                cleanFrame.style.transform = `
+                    perspective(1000px)
                     rotateX(${rotateX}deg)
                     rotateY(${rotateY}deg)
                     translateX(${moveX}px)
                     translateY(${moveY}px)
                 `;
                 
-                const glowIntensity = Math.min(0.15, (Math.abs(deltaX) + Math.abs(deltaY)) / 1500);
-                largeFrame.style.borderColor = `rgba(255, 255, 255, ${0.12 + glowIntensity})`;
-                
-                const shadowIntensity = Math.min(0.5, (Math.abs(deltaX) + Math.abs(deltaY)) / 2000);
-                largeFrame.style.boxShadow = `
-                    0 20px 60px rgba(0, 0, 0, 0.3),
-                    0 0 ${20 + shadowIntensity * 40}px rgba(255, 255, 255, ${0.05 + shadowIntensity * 0.1})
-                `;
+                const glowIntensity = Math.min(0.1, (Math.abs(deltaX) + Math.abs(deltaY)) / 2000);
+                cleanFrame.style.borderColor = `rgba(255, 255, 255, ${0.1 + glowIntensity})`;
             });
             
             window.addEventListener('resize', function() {
@@ -649,19 +625,14 @@
                     const time = Date.now() * 0.001;
                     const breath = Math.sin(time * 0.5) * 0.5 + 0.5;
                     
-                    largeFrame.style.transform = `
-                        perspective(1200px)
-                        rotateX(${Math.sin(time * 0.3) * 0.5}deg)
-                        rotateY(${Math.cos(time * 0.2) * 0.5}deg)
-                        translateY(${breath * 2}px)
+                    cleanFrame.style.transform = `
+                        perspective(1000px)
+                        rotateX(${Math.sin(time * 0.3) * 0.3}deg)
+                        rotateY(${Math.cos(time * 0.2) * 0.3}deg)
+                        translateY(${breath * 1}px)
                     `;
                     
-                    largeFrame.style.borderColor = `rgba(255, 255, 255, ${0.12 + breath * 0.03})`;
-                    
-                    largeFrame.style.boxShadow = `
-                        0 20px 60px rgba(0, 0, 0, 0.3),
-                        0 0 ${20 + breath * 10}px rgba(255, 255, 255, ${0.05 + breath * 0.05})
-                    `;
+                    cleanFrame.style.borderColor = `rgba(255, 255, 255, ${0.1 + breath * 0.02})`;
                 }
                 
                 isMouseMoving = false;
@@ -672,30 +643,21 @@
         }
 
         entryScreen.addEventListener('click', async function() {
-            entryScreen.style.opacity = '0';
+            // Just show main content without any fade animation
+            entryScreen.style.display = 'none';
+            mainContent.style.display = 'block';
             
-            setTimeout(async () => {
-                entryScreen.style.display = 'none';
-                mainContent.style.display = 'block';
-                
-                setTimeout(() => {
-                    mainContent.style.opacity = '1';
-                    largeFrame.style.opacity = '1';
-                    largeFrame.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) translateY(0)';
-                    typewriterEffect();
-                }, 100);
-                
-                loadServerData();
-                
-                try {
-                    bgAudio.volume = 0.2;
-                    await bgAudio.play();
-                } catch (error) {
-                    console.log("Audio requires interaction:", error);
-                }
-                
-                initMouseEffect();
-            }, 800);
+            typewriterEffect();
+            loadServerData();
+            
+            try {
+                bgAudio.volume = 0.15;
+                await bgAudio.play();
+            } catch (error) {
+                console.log("Audio requires interaction:", error);
+            }
+            
+            initMouseEffect();
         });
 
         document.addEventListener('keydown', function(e) {
@@ -719,15 +681,9 @@
             }
             
             if (e.code === 'Escape') {
-                largeFrame.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) translateY(0)';
+                cleanFrame.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
             }
         });
-
-        setTimeout(() => {
-            if (entryScreen.style.display !== 'none') {
-                entryScreen.click();
-            }
-        }, 3000);
     </script>
 </body>
 </html>
