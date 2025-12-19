@@ -81,9 +81,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.08;
+            opacity: 0.05;
             pointer-events: none;
-            filter: grayscale(100%) contrast(120%) blur(1px);
+            filter: grayscale(100%) contrast(120%) blur(2px);
             z-index: 1;
         }
 
@@ -100,147 +100,112 @@
 
         .sideways-rectangle {
             position: relative;
-            width: 700px;
-            height: 300px;
-            background: rgba(15, 15, 15, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            box-shadow: 
-                0 0 0 1px rgba(0, 0, 0, 0.3),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            width: 600px;
+            height: 250px;
+            background: rgba(10, 10, 10, 0.08);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
             transform-style: preserve-3d;
             opacity: 0;
             transform: translateY(30px) perspective(1000px) rotateY(0) rotateX(0);
             transition: opacity 0.6s ease, transform 0.6s ease;
             cursor: default;
-        }
-
-        .corner {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            z-index: 2;
-        }
-
-        .corner-tl {
-            top: 5px;
-            left: 5px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-tr {
-            top: 5px;
-            right: 5px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-bl {
-            bottom: 5px;
-            left: 5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-br {
-            bottom: 5px;
-            right: 5px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
         }
 
         .rectangle-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
+            gap: 30px;
             width: 100%;
             height: 100%;
-            padding: 30px;
+            padding: 20px;
         }
 
         .left-column {
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 40px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding-right: 30px;
         }
 
         .profile-section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .profile-header {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
         .profile-image {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             filter: grayscale(100%) contrast(120%);
         }
 
         .profile-text h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            letter-spacing: -1px;
             color: #ffffff;
             margin-bottom: 2px;
             font-family: 'Courier New', monospace;
-            min-height: 28px;
+            min-height: 24px;
         }
 
         .profile-text p {
-            font-size: 13px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.4);
         }
 
         .bio-section {
-            font-size: 14px;
+            font-size: 12px;
             line-height: 1.5;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
         }
 
         .bio-line {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .accounts-section {
-            margin-bottom: 30px;
+            margin-bottom: 0;
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .account-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            padding: 8px;
+            margin-bottom: 6px;
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
             transition: all 0.2s ease;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .account-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .right-column {
@@ -250,36 +215,39 @@
 
         .servers-section {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .server-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
+            gap: 10px;
+            padding: 8px;
             margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
             transition: all 0.2s ease;
             cursor: pointer;
+            flex: 1;
         }
 
-        .server-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
+        .server-item:last-child {
+            margin-bottom: 0;
         }
 
         .server-icon {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: rgba(20, 20, 20, 0.5);
+            background: rgba(20, 20, 20, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
             flex-shrink: 0;
         }
 
@@ -289,9 +257,9 @@
         }
 
         .server-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 2px;
             white-space: nowrap;
             overflow: hidden;
@@ -299,25 +267,26 @@
         }
 
         .server-members {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .server-join {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 11px;
+            flex-shrink: 0;
         }
 
         .rectangle-footer {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
+            bottom: 8px;
+            right: 8px;
         }
 
         .footer-text {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.15);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -342,24 +311,24 @@
             50% { opacity: 0; }
         }
 
-        @media (max-width: 800px) {
+        @media (max-width: 650px) {
             .sideways-rectangle {
                 width: 90%;
                 height: auto;
-                min-height: 400px;
+                min-height: 250px;
                 margin: 20px;
             }
             
             .rectangle-content {
                 grid-template-columns: 1fr;
-                gap: 30px;
+                gap: 20px;
             }
             
             .left-column {
                 border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 padding-right: 0;
-                padding-bottom: 30px;
+                padding-bottom: 20px;
             }
             
             .entry-text {
@@ -371,11 +340,11 @@
             .sideways-rectangle {
                 width: 95%;
                 height: auto;
-                min-height: 450px;
+                min-height: 280px;
             }
             
             .rectangle-content {
-                padding: 20px;
+                padding: 15px;
             }
         }
     </style>
@@ -393,11 +362,6 @@
         
         <div class="main-container">
             <div class="sideways-rectangle" id="sidewaysRectangle">
-                <div class="corner corner-tl"></div>
-                <div class="corner corner-tr"></div>
-                <div class="corner corner-bl"></div>
-                <div class="corner corner-br"></div>
-                
                 <div class="rectangle-content">
                     <div class="left-column">
                         <div class="profile-section">
@@ -491,7 +455,6 @@
         let windowHeight = window.innerHeight;
         let isMouseMoving = false;
 
-        // Typewriter effect that keeps repeating
         function typewriterEffect() {
             const name = "mev/slice";
             let i = 0;
@@ -577,7 +540,7 @@
                 const initials = guild.name 
                     ? guild.name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2)
                     : '??';
-                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.4); font-size: 12px;">${initials}</div>`;
+                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.3); font-size: 10px;">${initials}</div>`;
             }
             
             serverElement.onclick = () => window.open(inviteUrl, '_blank');
@@ -608,10 +571,10 @@
                 const deltaX = mouseX - centerX;
                 const deltaY = mouseY - centerY;
                 
-                const rotateY = (deltaX / centerX) * 8;
-                const rotateX = (deltaY / centerY) * -8;
-                const moveX = (deltaX / centerX) * 30;
-                const moveY = (deltaY / centerY) * 30;
+                const rotateY = (deltaX / centerX) * 10;
+                const rotateX = (deltaY / centerY) * -10;
+                const moveX = (deltaX / centerX) * 40;
+                const moveY = (deltaY / centerY) * 40;
                 
                 sidewaysRectangle.style.transform = `
                     perspective(1000px)
@@ -621,18 +584,8 @@
                     translateY(${moveY}px)
                 `;
                 
-                const glowIntensity = Math.min(0.3, (Math.abs(deltaX) + Math.abs(deltaY)) / 1000);
-                sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.2 + glowIntensity})`;
-                
-                const shadowX = moveX * 0.1;
-                const shadowY = moveY * 0.1;
-                const shadowBlur = 20 + Math.abs(moveX) * 0.1 + Math.abs(moveY) * 0.1;
-                
-                sidewaysRectangle.style.boxShadow = `
-                    ${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.4),
-                    0 0 0 1px rgba(0, 0, 0, 0.3),
-                    inset 0 0 0 1px rgba(255, 255, 255, ${0.05 + glowIntensity * 0.1})
-                `;
+                const glowIntensity = Math.min(0.2, (Math.abs(deltaX) + Math.abs(deltaY)) / 1000);
+                sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.15 + glowIntensity})`;
             });
             
             window.addEventListener('resize', function() {
@@ -647,12 +600,12 @@
                     
                     sidewaysRectangle.style.transform = `
                         perspective(1000px)
-                        rotateX(${Math.sin(time * 0.3) * 0.5}deg)
-                        rotateY(${Math.cos(time * 0.2) * 0.5}deg)
-                        translateY(${breath * 2}px)
+                        rotateX(${Math.sin(time * 0.3) * 0.8}deg)
+                        rotateY(${Math.cos(time * 0.2) * 0.8}deg)
+                        translateY(${breath * 3}px)
                     `;
                     
-                    sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.2 + breath * 0.05})`;
+                    sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.15 + breath * 0.05})`;
                 }
                 
                 isMouseMoving = false;
@@ -679,7 +632,7 @@
                 loadServerData();
                 
                 try {
-                    bgAudio.volume = 0.3;
+                    bgAudio.volume = 0.2;
                     await bgAudio.play();
                 } catch (error) {
                     console.log("Audio requires interaction:", error);
