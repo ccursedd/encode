@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mev/ipv6</title>
-    
-    <!-- Open Graph / Discord Embed Tags -->
-    <meta property="og:title" content="enter the depths of mev">
-    <meta property="og:description" content="enter the depths of mev">
+    <title>mev/slice</title>
+    <meta property="og:title" content="mev/slice">
+    <meta property="og:description" content="mev/slice • terminal access">
     <meta property="og:image" content="https://i.pinimg.com/736x/97/d3/1d/97d31d307fb2dd2b856a69e6d7ba7560.jpg">
     <meta property="og:type" content="profile">
-    
-    <!-- Theme color -->
     <meta name="theme-color" content="#000000">
     
     <style>
@@ -24,14 +20,13 @@
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', monospace;
             background: #000000;
             color: #ffffff;
             overflow: hidden;
             cursor: default;
         }
 
-        /* Entry Screen - Simple */
         #entryScreen {
             position: fixed;
             top: 0;
@@ -52,26 +47,23 @@
         }
 
         .entry-text {
-            font-size: 3rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 2px;
             color: #ffffff;
             opacity: 0.9;
+            font-family: 'Courier New', monospace;
         }
 
         .entry-hint {
-            font-size: 0.8rem;
-            font-weight: 300;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 1rem;
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 20px;
             opacity: 0;
             animation: fadeIn 2s ease 1s forwards;
         }
 
-        /* Main Content */
         #mainContent {
             display: none;
             position: relative;
@@ -82,7 +74,6 @@
             transition: opacity 0.6s ease;
         }
 
-        /* GIF Background */
         .gif-bg {
             position: fixed;
             top: 0;
@@ -90,151 +81,161 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.12; /* Very subtle */
+            opacity: 0.08;
             pointer-events: none;
             filter: grayscale(100%) contrast(120%) blur(1px);
             z-index: 1;
         }
 
-        /* Dark overlay */
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .main-container {
+            position: relative;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            pointer-events: none;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            perspective: 1000px;
+        }
+
+        .sideways-rectangle {
+            position: relative;
+            width: 700px;
+            height: 300px;
+            background: rgba(15, 15, 15, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            box-shadow: 
+                0 0 0 1px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transform-style: preserve-3d;
+            opacity: 0;
+            transform: translateY(30px) perspective(1000px) rotateY(0) rotateX(0);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            cursor: default;
+        }
+
+        .corner {
+            position: absolute;
+            width: 10px;
+            height: 10px;
             z-index: 2;
         }
 
-        /* Draggable Rectangle Frame */
-        .draggable-frame {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 420px;
-            height: 520px;
-            background: rgba(15, 15, 15, 0.15); /* Almost invisible */
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2); /* White outline */
-            border-radius: 4px; /* Slightly rounded corners */
-            box-shadow: 
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-            z-index: 10;
-            cursor: move;
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.2s ease;
-            overflow: hidden;
+        .corner-tl {
+            top: 5px;
+            left: 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Inner content container */
-        .frame-content {
+        .corner-tr {
+            top: 5px;
+            right: 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .corner-bl {
+            bottom: 5px;
+            left: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .corner-br {
+            bottom: 5px;
+            right: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .rectangle-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
             width: 100%;
             height: 100%;
-            padding: 25px;
+            padding: 30px;
+        }
+
+        .left-column {
             display: flex;
             flex-direction: column;
-            position: relative;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 40px;
         }
 
-        /* Frame header */
-        .frame-header {
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .frame-title {
-            font-size: 14px;
-            font-weight: 300;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .frame-drag-indicator {
-            width: 60px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-left: auto;
-        }
-
-        /* Profile section */
-        .profile-section {
-            text-align: center;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .profile-image {
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            margin: 0 auto 15px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             filter: grayscale(100%) contrast(120%);
-            opacity: 0.9;
         }
 
-        .profile-name {
-            font-size: 16px;
-            font-weight: 300;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 5px;
+        .profile-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: #ffffff;
+            margin-bottom: 2px;
+            font-family: 'Courier New', monospace;
+            min-height: 28px;
         }
 
-        .profile-tag {
-            font-size: 11px;
-            font-weight: 300;
-            letter-spacing: 2px;
+        .profile-text p {
+            font-size: 13px;
             color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase;
         }
 
-        /* Accounts section */
-        .accounts-section {
+        .bio-section {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 25px;
         }
 
-        .section-title {
-            font-size: 11px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.4);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .bio-line {
+            margin-bottom: 8px;
         }
 
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
+        .accounts-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
         }
 
         .account-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 4px;
-            padding: 10px 12px;
+            padding: 10px;
             margin-bottom: 8px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Courier New', monospace;
             font-size: 12px;
-            letter-spacing: 1px;
             color: rgba(255, 255, 255, 0.7);
             transition: all 0.2s ease;
-            cursor: default;
         }
 
         .account-item:hover {
@@ -242,7 +243,11 @@
             border-color: rgba(255, 255, 255, 0.15);
         }
 
-        /* Servers section */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+        }
+
         .servers-section {
             flex: 1;
         }
@@ -250,44 +255,42 @@
         .server-item {
             display: flex;
             align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 8px;
             transition: all 0.2s ease;
             cursor: pointer;
-            gap: 10px;
         }
 
         .server-item:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(2px);
         }
 
         .server-icon {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: rgba(20, 20, 20, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             color: rgba(255, 255, 255, 0.4);
             flex-shrink: 0;
         }
 
-        .server-details {
+        .server-info {
             flex: 1;
             min-width: 0;
         }
 
         .server-name {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 13px;
+            font-weight: 500;
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 2px;
             white-space: nowrap;
@@ -296,211 +299,177 @@
         }
 
         .server-members {
-            font-size: 10px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.5px;
         }
 
         .server-join {
             color: rgba(255, 255, 255, 0.3);
             font-size: 12px;
-            opacity: 0.5;
-            margin-left: 5px;
         }
 
-        /* Frame footer */
-        .frame-footer {
-            margin-top: 15px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
+        .rectangle-footer {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
         }
 
         .footer-text {
             font-size: 10px;
             font-weight: 300;
-            letter-spacing: 2px;
             color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        /* Corner indicators */
-        .corner {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            z-index: 11;
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #ffffff;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
         }
 
-        .corner-tl {
-            top: 8px;
-            left: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-tr {
-            top: 8px;
-            right: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-bl {
-            bottom: 8px;
-            left: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .corner-br {
-            bottom: 8px;
-            right: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .draggable-frame {
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @media (max-width: 800px) {
+            .sideways-rectangle {
                 width: 90%;
-                max-width: 400px;
-                height: 500px;
+                height: auto;
+                min-height: 400px;
+                margin: 20px;
+            }
+            
+            .rectangle-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .left-column {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-right: 0;
+                padding-bottom: 30px;
             }
             
             .entry-text {
-                font-size: 2rem;
-                letter-spacing: 4px;
+                font-size: 36px;
             }
         }
 
         @media (max-width: 480px) {
-            .draggable-frame {
+            .sideways-rectangle {
                 width: 95%;
-                height: 480px;
-                padding: 15px;
+                height: auto;
+                min-height: 450px;
             }
             
-            .profile-image {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .profile-name {
-                font-size: 14px;
+            .rectangle-content {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Entry Screen -->
     <div id="entryScreen">
         <div class="entry-content">
-            <div class="entry-text">mev/ipv6</div>
+            <div class="entry-text">mev/slice</div>
             <div class="entry-hint">click to enter</div>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div id="mainContent">
-        <!-- GIF Background -->
         <img src="https://raw.githubusercontent.com/ikiikikikijujijij-oss/encode/refs/heads/main/life.gif" alt="" class="gif-bg" loading="eager" decoding="async">
         
-        <!-- Dark overlay -->
-        <div class="bg-overlay"></div>
-        
-        <!-- Draggable Frame -->
-        <div class="draggable-frame" id="draggableFrame">
-            <!-- Corner indicators -->
-            <div class="corner corner-tl"></div>
-            <div class="corner corner-tr"></div>
-            <div class="corner corner-bl"></div>
-            <div class="corner corner-br"></div>
-            
-            <!-- Frame Content -->
-            <div class="frame-content">
-                <div class="frame-header">
-                    <div class="frame-title">mev/ipv6</div>
-                    <div class="frame-drag-indicator"></div>
-                </div>
+        <div class="main-container">
+            <div class="sideways-rectangle" id="sidewaysRectangle">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
                 
-                <!-- Profile Section -->
-                <div class="profile-section">
-                    <img src="https://i.pinimg.com/736x/97/d3/1d/97d31d307fb2dd2b856a69e6d7ba7560.jpg" 
-                         alt="Profile" 
-                         class="profile-image"
-                         loading="eager">
-                    <div class="profile-name">mev/ipv6</div>
-                    <div class="profile-tag">system terminal</div>
-                </div>
-                
-                <!-- Accounts Section -->
-                <div class="accounts-section">
-                    <div class="section-title">accounts</div>
-                    <div class="account-item">
-                        mev/98fv
-                    </div>
-                    <div class="account-item">
-                        mev/sliceyourwristformev
-                    </div>
-                </div>
-                
-                <!-- Servers Section -->
-                <div class="servers-section">
-                    <div class="section-title">servers</div>
-                    
-                    <!-- Server 1 -->
-                    <div class="server-item" id="server1">
-                        <div class="server-icon" id="serverIcon1">
-                            <div>...</div>
+                <div class="rectangle-content">
+                    <div class="left-column">
+                        <div class="profile-section">
+                            <div class="profile-header">
+                                <img src="https://i.pinimg.com/736x/97/d3/1d/97d31d307fb2dd2b856a69e6d7ba7560.jpg" 
+                                     alt="Profile" 
+                                     class="profile-image"
+                                     loading="eager">
+                                <div class="profile-text">
+                                    <h1 id="typewriterName"></h1>
+                                    <p>last seen: 3 days ago</p>
+                                </div>
+                            </div>
+                            <div class="bio-section">
+                                <div class="bio-line">mev/slice</div>
+                                <div class="bio-line">living life m</div>
+                            </div>
                         </div>
-                        <div class="server-details">
-                            <div class="server-name" id="serverName1">Loading...</div>
-                            <div class="server-members" id="serverMembers1">- members</div>
+                        
+                        <div class="accounts-section">
+                            <div class="section-title">Accounts</div>
+                            <div class="account-item">mev/98fv</div>
+                            <div class="account-item">mev/sliceyourwristformev</div>
                         </div>
-                        <div class="server-join">→</div>
                     </div>
                     
-                    <!-- Server 2 -->
-                    <div class="server-item" id="server2">
-                        <div class="server-icon" id="serverIcon2">
-                            <div>...</div>
+                    <div class="right-column">
+                        <div class="servers-section">
+                            <div class="section-title">Servers</div>
+                            <div class="server-item" id="server1">
+                                <div class="server-icon" id="serverIcon1">
+                                    <div>...</div>
+                                </div>
+                                <div class="server-info">
+                                    <div class="server-name" id="serverName1">Loading...</div>
+                                    <div class="server-members" id="serverMembers1">- members</div>
+                                </div>
+                                <div class="server-join">→</div>
+                            </div>
+                            
+                            <div class="server-item" id="server2">
+                                <div class="server-icon" id="serverIcon2">
+                                    <div>...</div>
+                                </div>
+                                <div class="server-info">
+                                    <div class="server-name" id="serverName2">Loading...</div>
+                                    <div class="server-members" id="serverMembers2">- members</div>
+                                </div>
+                                <div class="server-join">→</div>
+                            </div>
                         </div>
-                        <div class="server-details">
-                            <div class="server-name" id="serverName2">Loading...</div>
-                            <div class="server-members" id="serverMembers2">- members</div>
-                        </div>
-                        <div class="server-join">→</div>
                     </div>
                 </div>
                 
-                <!-- Footer -->
-                <div class="frame-footer">
-                    <div class="footer-text">drag to move • esc to reset</div>
+                <div class="rectangle-footer">
+                    <div class="footer-text">move mouse to interact</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Audio Element -->
     <audio id="bgAudio" loop preload="auto">
         <source src="https://github.com/ikiikikikijujijij-oss/encode/raw/refs/heads/main/life.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // DOM elements
         const entryScreen = document.getElementById('entryScreen');
         const mainContent = document.getElementById('mainContent');
-        const draggableFrame = document.getElementById('draggableFrame');
+        const sidewaysRectangle = document.getElementById('sidewaysRectangle');
         const bgAudio = document.getElementById('bgAudio');
+        const typewriterName = document.getElementById('typewriterName');
         
-        // Server data
         const servers = [
             {
                 id: 'server1',
@@ -516,12 +485,55 @@
             }
         ];
 
-        // Dragging variables
-        let isDragging = false;
-        let dragOffset = { x: 0, y: 0 };
-        let framePosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        let mouseX = 0;
+        let mouseY = 0;
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+        let isMouseMoving = false;
 
-        // Fetch Discord server information
+        // Typewriter effect that keeps repeating
+        function typewriterEffect() {
+            const name = "mev/slice";
+            let i = 0;
+            let isDeleting = false;
+            let isWaiting = false;
+            
+            function type() {
+                if (isWaiting) {
+                    setTimeout(() => {
+                        isWaiting = false;
+                        if (!isDeleting) {
+                            isDeleting = true;
+                        } else {
+                            isDeleting = false;
+                            i = 0;
+                        }
+                        type();
+                    }, 1000);
+                    return;
+                }
+                
+                const currentText = name.substring(0, i);
+                typewriterName.innerHTML = currentText + '<span class="cursor"></span>';
+                
+                if (!isDeleting) {
+                    i++;
+                    if (i > name.length) {
+                        isWaiting = true;
+                    }
+                } else {
+                    i--;
+                    if (i === 0) {
+                        isWaiting = true;
+                    }
+                }
+                
+                setTimeout(type, isDeleting ? 50 : 100);
+            }
+            
+            type();
+        }
+
         async function fetchServerInfo(inviteCode) {
             try {
                 const response = await fetch(`https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`);
@@ -533,9 +545,6 @@
                 const data = await response.json();
                 return data;
             } catch (error) {
-                console.error(`Error fetching server info for ${inviteCode}:`, error);
-                
-                // Return fallback data
                 return {
                     guild: {
                         name: `Server ${inviteCode}`,
@@ -546,22 +555,18 @@
             }
         }
 
-        // Update server display
         function updateServerDisplay(serverElement, serverData, inviteUrl) {
             const guild = serverData.guild;
             
-            // Update server name
             const serverNameElement = serverElement.querySelector('.server-name');
-            serverNameElement.textContent = guild.name || `Server`;
+            serverNameElement.textContent = guild.name || `Server ${serverData.inviteCode}`;
             
-            // Update member count
             const membersElement = serverElement.querySelector('.server-members');
             if (guild.approximate_member_count) {
                 const formattedCount = guild.approximate_member_count.toLocaleString();
                 membersElement.textContent = `${formattedCount} members`;
             }
             
-            // Update server icon
             const iconElement = serverElement.querySelector('.server-icon');
             if (guild.icon) {
                 const iconUrl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=64`;
@@ -569,18 +574,15 @@
                 iconElement.style.backgroundSize = 'cover';
                 iconElement.innerHTML = '';
             } else {
-                // Use initials
                 const initials = guild.name 
                     ? guild.name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2)
                     : '??';
-                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.4); font-size: 11px;">${initials}</div>`;
+                iconElement.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: rgba(255,255,255,0.4); font-size: 12px;">${initials}</div>`;
             }
             
-            // Make clickable
             serverElement.onclick = () => window.open(inviteUrl, '_blank');
         }
 
-        // Load server data
         async function loadServerData() {
             for (const server of servers) {
                 try {
@@ -595,132 +597,99 @@
             }
         }
 
-        // Dragging functionality
-        function initDragging() {
-            // Mouse down - start dragging
-            draggableFrame.addEventListener('mousedown', startDrag);
+        function initMouseEffect() {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                isMouseMoving = true;
+                
+                const centerX = windowWidth / 2;
+                const centerY = windowHeight / 2;
+                const deltaX = mouseX - centerX;
+                const deltaY = mouseY - centerY;
+                
+                const rotateY = (deltaX / centerX) * 8;
+                const rotateX = (deltaY / centerY) * -8;
+                const moveX = (deltaX / centerX) * 30;
+                const moveY = (deltaY / centerY) * 30;
+                
+                sidewaysRectangle.style.transform = `
+                    perspective(1000px)
+                    rotateX(${rotateX}deg)
+                    rotateY(${rotateY}deg)
+                    translateX(${moveX}px)
+                    translateY(${moveY}px)
+                `;
+                
+                const glowIntensity = Math.min(0.3, (Math.abs(deltaX) + Math.abs(deltaY)) / 1000);
+                sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.2 + glowIntensity})`;
+                
+                const shadowX = moveX * 0.1;
+                const shadowY = moveY * 0.1;
+                const shadowBlur = 20 + Math.abs(moveX) * 0.1 + Math.abs(moveY) * 0.1;
+                
+                sidewaysRectangle.style.boxShadow = `
+                    ${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.4),
+                    0 0 0 1px rgba(0, 0, 0, 0.3),
+                    inset 0 0 0 1px rgba(255, 255, 255, ${0.05 + glowIntensity * 0.1})
+                `;
+            });
             
-            // Mouse move - handle dragging
-            document.addEventListener('mousemove', handleDrag);
+            window.addEventListener('resize', function() {
+                windowWidth = window.innerWidth;
+                windowHeight = window.innerHeight;
+            });
             
-            // Mouse up - stop dragging
-            document.addEventListener('mouseup', stopDrag);
-            
-            // Touch events for mobile
-            draggableFrame.addEventListener('touchstart', startDragTouch);
-            document.addEventListener('touchmove', handleDragTouch);
-            document.addEventListener('touchend', stopDrag);
-        }
-
-        function startDrag(e) {
-            isDragging = true;
-            const rect = draggableFrame.getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
-            draggableFrame.style.cursor = 'grabbing';
-            e.preventDefault();
-        }
-
-        function startDragTouch(e) {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                const rect = draggableFrame.getBoundingClientRect();
-                dragOffset.x = e.touches[0].clientX - rect.left;
-                dragOffset.y = e.touches[0].clientY - rect.top;
-                e.preventDefault();
+            function breathingAnimation() {
+                if (!isMouseMoving) {
+                    const time = Date.now() * 0.001;
+                    const breath = Math.sin(time * 0.5) * 0.5 + 0.5;
+                    
+                    sidewaysRectangle.style.transform = `
+                        perspective(1000px)
+                        rotateX(${Math.sin(time * 0.3) * 0.5}deg)
+                        rotateY(${Math.cos(time * 0.2) * 0.5}deg)
+                        translateY(${breath * 2}px)
+                    `;
+                    
+                    sidewaysRectangle.style.borderColor = `rgba(255, 255, 255, ${0.2 + breath * 0.05})`;
+                }
+                
+                isMouseMoving = false;
+                requestAnimationFrame(breathingAnimation);
             }
+            
+            breathingAnimation();
         }
 
-        function handleDrag(e) {
-            if (!isDragging) return;
-            
-            framePosition.x = e.clientX - dragOffset.x;
-            framePosition.y = e.clientY - dragOffset.y;
-            
-            updateFramePosition();
-        }
-
-        function handleDragTouch(e) {
-            if (!isDragging || e.touches.length !== 1) return;
-            
-            framePosition.x = e.touches[0].clientX - dragOffset.x;
-            framePosition.y = e.touches[0].clientY - dragOffset.y;
-            
-            updateFramePosition();
-            e.preventDefault();
-        }
-
-        function stopDrag() {
-            isDragging = false;
-            draggableFrame.style.cursor = 'move';
-        }
-
-        function updateFramePosition() {
-            // Keep frame within bounds
-            const frameWidth = draggableFrame.offsetWidth;
-            const frameHeight = draggableFrame.offsetHeight;
-            
-            framePosition.x = Math.max(0, Math.min(framePosition.x, window.innerWidth - frameWidth));
-            framePosition.y = Math.max(0, Math.min(framePosition.y, window.innerHeight - frameHeight));
-            
-            draggableFrame.style.left = `${framePosition.x}px`;
-            draggableFrame.style.top = `${framePosition.y}px`;
-            draggableFrame.style.transform = 'none';
-        }
-
-        // Reset frame to center
-        function resetFramePosition() {
-            framePosition.x = (window.innerWidth - draggableFrame.offsetWidth) / 2;
-            framePosition.y = (window.innerHeight - draggableFrame.offsetHeight) / 2;
-            updateFramePosition();
-            
-            // Add transition for smooth reset
-            draggableFrame.style.transition = 'left 0.5s ease, top 0.5s ease';
-            setTimeout(() => {
-                draggableFrame.style.transition = 'opacity 0.5s ease, transform 0.2s ease';
-            }, 500);
-        }
-
-        // Entry screen click
         entryScreen.addEventListener('click', async function() {
-            // Fade out entry screen
             entryScreen.style.opacity = '0';
             
             setTimeout(async () => {
-                // Hide entry screen
                 entryScreen.style.display = 'none';
-                
-                // Show main content
                 mainContent.style.display = 'block';
                 
-                // Animate main content in
                 setTimeout(() => {
                     mainContent.style.opacity = '1';
-                    
-                    // Show and center the frame
-                    draggableFrame.style.opacity = '1';
-                    resetFramePosition();
+                    sidewaysRectangle.style.opacity = '1';
+                    sidewaysRectangle.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                    typewriterEffect();
                 }, 100);
                 
-                // Load server data
                 loadServerData();
                 
-                // Start audio
                 try {
                     bgAudio.volume = 0.3;
                     await bgAudio.play();
-                } catch (e) {
-                    console.log("Audio requires interaction");
+                } catch (error) {
+                    console.log("Audio requires interaction:", error);
                 }
                 
-                // Initialize dragging
-                initDragging();
+                initMouseEffect();
             }, 800);
         });
 
-        // Keyboard controls
         document.addEventListener('keydown', function(e) {
-            // Space to play/pause audio
             if (e.code === 'Space') {
                 e.preventDefault();
                 if (bgAudio.paused) {
@@ -730,51 +699,21 @@
                 }
             }
             
-            // M to mute/unmute
             if (e.code === 'KeyM') {
                 e.preventDefault();
                 bgAudio.muted = !bgAudio.muted;
             }
             
-            // ESC to reset frame position
+            if (e.code === 'KeyR' && e.ctrlKey) {
+                e.preventDefault();
+                loadServerData();
+            }
+            
             if (e.code === 'Escape') {
-                resetFramePosition();
-            }
-            
-            // Arrow keys to move frame (with Shift for faster movement)
-            const moveSpeed = e.shiftKey ? 20 : 10;
-            
-            switch(e.code) {
-                case 'ArrowUp':
-                    e.preventDefault();
-                    framePosition.y = Math.max(0, framePosition.y - moveSpeed);
-                    updateFramePosition();
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    framePosition.y = Math.min(window.innerHeight - draggableFrame.offsetHeight, framePosition.y + moveSpeed);
-                    updateFramePosition();
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    framePosition.x = Math.max(0, framePosition.x - moveSpeed);
-                    updateFramePosition();
-                    break;
-                case 'ArrowRight':
-                    e.preventDefault();
-                    framePosition.x = Math.min(window.innerWidth - draggableFrame.offsetWidth, framePosition.x + moveSpeed);
-                    updateFramePosition();
-                    break;
+                sidewaysRectangle.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
             }
         });
 
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            // Keep frame within new bounds
-            updateFramePosition();
-        });
-
-        // Auto-enter after 3 seconds
         setTimeout(() => {
             if (entryScreen.style.display !== 'none') {
                 entryScreen.click();
