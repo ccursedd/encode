@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kittybin.lat - Share Text with Everyone</title>
+    <title>kittybin.lat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -140,14 +140,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="#/" class="text-2xl font-bold text-white flex items-center">
+                    <a href="#/" class="text-2xl font-bold text-white flex items-center" id="home-link">
                         <span>kittybin.lat</span>
                     </a>
                     <div class="hidden md:flex space-x-1">
-                        <a href="/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Home</a>
-                        <a href="/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Add Paste</a>
-                        <a href="/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Users</a>
-                        <a href="/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">About</a>
+                        <a href="#/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Home</a>
+                        <a href="#/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Add Paste</a>
+                        <a href="#/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Users</a>
+                        <a href="#/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">About</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -217,7 +217,7 @@
             }
         }
 
-        // Get current hash path
+        // Get current hash path (remove the # and leading slash)
         function getHashPath() {
             const hash = window.location.hash.slice(1) || '/';
             return hash;
@@ -247,12 +247,13 @@
                 currentUser = { ...currentUser, ...data };
             } else if (error && error.code === 'PGRST116') {
                 // Profile doesn't exist, create it
+                const username = currentUser.email?.split('@')[0] || 'user_' + Math.random().toString(36).substring(7);
                 const { data: newProfile, error: createError } = await supabase
                     .from('profiles')
                     .insert([
                         { 
                             id: userId, 
-                            username: currentUser.email?.split('@')[0] || 'user_' + Math.random().toString(36).substring(7),
+                            username: username,
                             role: 'User',
                             paste_count: 0,
                             comment_count: 0
@@ -273,7 +274,7 @@
             const authDiv = document.getElementById('authButtons');
             if (currentUser) {
                 authDiv.innerHTML = `
-                    <a href="/user/${currentUser.username}" class="flex items-center space-x-2">
+                    <a href="#/user/${currentUser.username}" class="flex items-center space-x-2">
                         ${currentUser.avatar_url ? 
                             `<img src="${currentUser.avatar_url}" class="w-8 h-8 rounded-full border border-custom">` : 
                             `<div class="w-8 h-8 rounded-full bg-tertiary border border-custom flex items-center justify-center font-bold">${currentUser.username?.[0]?.toUpperCase()}</div>`
@@ -299,6 +300,7 @@
 
         // Router
         window.addEventListener('hashchange', () => handleRoute());
+        window.addEventListener('load', () => handleRoute());
 
         function navigate(path) {
             window.location.hash = `#${path}`;
@@ -309,7 +311,8 @@
             const link = e.target.closest('a[href^="#"]');
             if (link) {
                 e.preventDefault();
-                navigate(link.getAttribute('href').slice(1));
+                const hash = link.getAttribute('href');
+                window.location.hash = hash;
             }
         });
 
@@ -340,7 +343,10 @@
                     const username = path.split('/')[2];
                     await renderUserProfile(username);
                 }
-                else await renderHome();
+                else {
+                    // Default to home
+                    window.location.hash = '#/';
+                }
             } catch (error) {
                 console.error('Route error:', error);
                 app.innerHTML = `
@@ -428,7 +434,7 @@
                 } else {
                     showToast('Profile updated successfully!', 'success');
                     closeModal();
-                    if (currentUser.id === profile.id) {
+                    if (currentUser && currentUser.id === profile.id) {
                         currentUser.username = username;
                         currentUser.bio = bio;
                         currentUser.avatar_url = avatar_url;
@@ -494,7 +500,7 @@
                                             </td>
                                             <td class="p-4 text-gray-400">${paste.views || 0}</td>
                                             <td class="p-4">
-                                                <a href="/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
+                                                <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
                                             </td>
                                             <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
                                             <td class="p-4">
@@ -533,7 +539,7 @@
         async function renderAddPaste() {
             if (!currentUser) {
                 showToast('Please login to create a paste', 'error');
-                navigate('/login');
+                window.location.hash = '#/login';
                 return;
             }
 
@@ -591,7 +597,7 @@
                     submitBtn.textContent = 'Create Shareable Link';
                 } else if (data) {
                     showToast('Paste created! Share the link with everyone', 'success');
-                    navigate(`/paste/${data.id}`);
+                    window.location.hash = `#/paste/${data.id}`;
                 }
             });
 
@@ -609,7 +615,7 @@
 
             if (error || !paste) {
                 showToast('Paste not found', 'error');
-                navigate('/');
+                window.location.hash = '#/';
                 return;
             }
 
@@ -636,7 +642,7 @@
                         <div class="flex items-center space-x-4 text-sm text-gray-400 mb-4">
                             <span>${(paste.views || 0) + 1} views</span>
                             <span>•</span>
-                            <a href="/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
+                            <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
                             <span>•</span>
                             <span>${new Date(paste.created_at).toLocaleString()}</span>
                         </div>
@@ -703,7 +709,7 @@
                                 ${users?.map(user => `
                                     <tr class="border-b border-custom hover:bg-tertiary">
                                         <td class="p-4">
-                                            <a href="/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
+                                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
                                                 ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
                                                 <span>${user.username}</span>
                                             </a>
@@ -730,7 +736,7 @@
                 tbody.innerHTML = filtered?.map(user => `
                     <tr class="border-b border-custom hover:bg-tertiary">
                         <td class="p-4">
-                            <a href="/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
+                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
                                 ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
                                 <span>${user.username}</span>
                             </a>
@@ -756,7 +762,7 @@
 
             if (error || !profile) {
                 showToast('User not found', 'error');
-                navigate('/users');
+                window.location.hash = '#/users';
                 return;
             }
 
@@ -907,7 +913,7 @@
 
         function renderLogin() {
             if (currentUser) {
-                navigate('/');
+                window.location.hash = '#/';
                 return;
             }
 
@@ -959,14 +965,14 @@
                     currentSession = data.session;
                     currentUser = data.user;
                     await loadUserProfile(data.user.id);
-                    navigate('/');
+                    window.location.hash = '#/';
                 }
             });
         }
 
         function renderSignup() {
             if (currentUser) {
-                navigate('/');
+                window.location.hash = '#/';
                 return;
             }
 
@@ -1050,7 +1056,7 @@
                         showToast('Signup successful! Please check your email for verification.', 'success');
                     }
                     
-                    navigate('/login');
+                    window.location.hash = '#/login';
                 }
             });
         }
