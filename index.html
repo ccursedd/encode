@@ -35,14 +35,6 @@
             background-color: #cccccc;
             border-color: #cccccc;
         }
-        .btn-danger {
-            background-color: #330000;
-            color: #ff6666;
-            border: 1px solid #660000;
-        }
-        .btn-danger:hover {
-            background-color: #440000;
-        }
         .input { 
             background-color: #1a1a1a; 
             border: 1px solid #333333; 
@@ -148,14 +140,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="/" class="text-2xl font-bold text-white flex items-center" data-link>
+                    <a href="#/" class="text-2xl font-bold text-white flex items-center">
                         <span>kittybin.lat</span>
                     </a>
                     <div class="hidden md:flex space-x-1">
-                        <a href="/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Home</a>
-                        <a href="/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Add Paste</a>
-                        <a href="/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Users</a>
-                        <a href="/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>About</a>
+                        <a href="#/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Home</a>
+                        <a href="#/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Add Paste</a>
+                        <a href="#/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Users</a>
+                        <a href="#/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">About</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -225,6 +217,12 @@
             }
         }
 
+        // Get current hash path
+        function getHashPath() {
+            const hash = window.location.hash.slice(1) || '/';
+            return hash;
+        }
+
         // Check for existing session
         async function initAuth() {
             const { data: { session }, error } = await supabase.auth.getSession();
@@ -275,7 +273,7 @@
             const authDiv = document.getElementById('authButtons');
             if (currentUser) {
                 authDiv.innerHTML = `
-                    <a href="/user/${currentUser.username}" class="flex items-center space-x-2" data-link>
+                    <a href="#/user/${currentUser.username}" class="flex items-center space-x-2">
                         ${currentUser.avatar_url ? 
                             `<img src="${currentUser.avatar_url}" class="w-8 h-8 rounded-full border border-custom">` : 
                             `<div class="w-8 h-8 rounded-full bg-tertiary border border-custom flex items-center justify-center font-bold">${currentUser.username?.[0]?.toUpperCase()}</div>`
@@ -288,37 +286,36 @@
                     currentUser = null;
                     currentSession = null;
                     updateAuthButtons();
-                    navigate('/');
+                    window.location.hash = '#/';
                     showToast('Logged out successfully', 'success');
                 });
             } else {
                 authDiv.innerHTML = `
-                    <a href="/login" class="btn" data-link>Login</a>
-                    <a href="/signup" class="btn btn-primary" data-link>Sign Up</a>
+                    <a href="#/login" class="btn">Login</a>
+                    <a href="#/signup" class="btn btn-primary">Sign Up</a>
                 `;
             }
         }
 
         // Router
-        window.addEventListener('popstate', () => handleRoute());
+        window.addEventListener('hashchange', () => handleRoute());
 
         function navigate(path) {
-            window.history.pushState({}, '', path);
-            handleRoute();
+            window.location.hash = `#${path}`;
         }
 
         // Handle navigation clicks
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('[data-link]');
+            const link = e.target.closest('a[href^="#"]');
             if (link) {
                 e.preventDefault();
-                navigate(link.getAttribute('href'));
+                navigate(link.getAttribute('href').slice(1));
             }
         });
 
         // Main router function
         async function handleRoute() {
-            const path = window.location.pathname;
+            const path = getHashPath();
             const app = document.getElementById('app');
             
             // Show loading
@@ -349,7 +346,7 @@
                 app.innerHTML = `
                     <div class="bg-secondary rounded-lg border border-custom p-6 text-center">
                         <p class="text-red-400">Error loading page: ${error.message}</p>
-                        <a href="/" class="btn mt-4 inline-block" data-link>Go Home</a>
+                        <a href="#/" class="btn mt-4 inline-block">Go Home</a>
                     </div>
                 `;
             }
@@ -462,6 +459,8 @@
 
             if (error) throw error;
 
+            const baseUrl = window.location.origin + window.location.pathname;
+
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="space-y-6">
@@ -491,15 +490,15 @@
                                     ${pastes?.length ? pastes.map(paste => `
                                         <tr class="border-b border-custom hover:bg-tertiary">
                                             <td class="p-4">
-                                                <a href="/paste/${paste.id}" class="text-white hover:underline" data-link>${paste.title}</a>
+                                                <a href="#/paste/${paste.id}" class="text-white hover:underline">${paste.title}</a>
                                             </td>
                                             <td class="p-4 text-gray-400">${paste.views || 0}</td>
                                             <td class="p-4">
-                                                <a href="/user/${paste.profiles?.username}" class="text-white hover:underline" data-link>${paste.profiles?.username || 'Anonymous'}</a>
+                                                <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
                                             </td>
                                             <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
                                             <td class="p-4">
-                                                <button class="copy-btn share-paste-btn" data-url="${window.location.origin}/paste/${paste.id}">
+                                                <button class="copy-btn share-paste-btn" data-url="${baseUrl}#/paste/${paste.id}">
                                                     Copy Link
                                                 </button>
                                             </td>
@@ -517,7 +516,7 @@
                     <div class="bg-secondary rounded-lg border border-custom p-6 text-center">
                         <h3 class="text-lg font-bold mb-2">Want to share something?</h3>
                         <p class="text-gray-400 mb-4">Create a paste and get a permanent link to share with everyone</p>
-                        <a href="/add" class="btn btn-primary inline-block" data-link>Create a Paste</a>
+                        <a href="#/add" class="btn btn-primary inline-block">Create a Paste</a>
                     </div>
                 </div>
             `;
@@ -620,7 +619,8 @@
                 .update({ views: (paste.views || 0) + 1 })
                 .eq('id', pasteId);
 
-            const shareUrl = window.location.href;
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}#/paste/${pasteId}`;
 
             const app = document.getElementById('app');
             app.innerHTML = `
@@ -636,7 +636,7 @@
                         <div class="flex items-center space-x-4 text-sm text-gray-400 mb-4">
                             <span>${(paste.views || 0) + 1} views</span>
                             <span>•</span>
-                            <a href="/user/${paste.profiles?.username}" class="text-white hover:underline" data-link>${paste.profiles?.username || 'Anonymous'}</a>
+                            <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${paste.profiles?.username || 'Anonymous'}</a>
                             <span>•</span>
                             <span>${new Date(paste.created_at).toLocaleString()}</span>
                         </div>
@@ -650,7 +650,7 @@
                         
                         <div class="mt-4 flex space-x-2">
                             <button class="copy-btn" id="copyContentBtn">Copy Content</button>
-                            <a href="/add" class="copy-btn" data-link>Create Your Own</a>
+                            <a href="#/add" class="copy-btn">Create Your Own</a>
                         </div>
                     </div>
                 </div>
@@ -703,7 +703,7 @@
                                 ${users?.map(user => `
                                     <tr class="border-b border-custom hover:bg-tertiary">
                                         <td class="p-4">
-                                            <a href="/user/${user.username}" class="text-white hover:underline flex items-center space-x-2" data-link>
+                                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
                                                 ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
                                                 <span>${user.username}</span>
                                             </a>
@@ -730,7 +730,7 @@
                 tbody.innerHTML = filtered?.map(user => `
                     <tr class="border-b border-custom hover:bg-tertiary">
                         <td class="p-4">
-                            <a href="/user/${user.username}" class="text-white hover:underline flex items-center space-x-2" data-link>
+                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
                                 ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
                                 <span>${user.username}</span>
                             </a>
@@ -767,6 +767,7 @@
                 .order('created_at', { ascending: false });
 
             const isOwnProfile = currentUser?.id === profile.id;
+            const baseUrl = window.location.origin + window.location.pathname;
 
             const app = document.getElementById('app');
             app.innerHTML = `
@@ -829,12 +830,12 @@
                                     ${pastes?.length ? pastes.map(paste => `
                                         <tr class="border-b border-custom hover:bg-tertiary">
                                             <td class="p-4">
-                                                <a href="/paste/${paste.id}" class="text-white hover:underline" data-link>${paste.title}</a>
+                                                <a href="#/paste/${paste.id}" class="text-white hover:underline">${paste.title}</a>
                                             </td>
                                             <td class="p-4 text-gray-400">${paste.views || 0}</td>
                                             <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
                                             <td class="p-4">
-                                                <button class="copy-btn share-paste-btn" data-url="${window.location.origin}/paste/${paste.id}">
+                                                <button class="copy-btn share-paste-btn" data-url="${baseUrl}#/paste/${paste.id}">
                                                     Copy Link
                                                 </button>
                                             </td>
@@ -929,7 +930,7 @@
                         <button type="submit" class="btn btn-primary w-full">Login</button>
                         
                         <p class="text-sm text-gray-400 text-center">
-                            Don't have an account? <a href="/signup" class="text-white hover:underline" data-link>Sign Up</a>
+                            Don't have an account? <a href="#/signup" class="text-white hover:underline">Sign Up</a>
                         </p>
                     </form>
                 </div>
@@ -993,7 +994,7 @@
                         <button type="submit" class="btn btn-primary w-full">Sign Up</button>
                         
                         <p class="text-sm text-gray-400 text-center">
-                            Already have an account? <a href="/login" class="text-white hover:underline" data-link>Login</a>
+                            Already have an account? <a href="#/login" class="text-white hover:underline">Login</a>
                         </p>
                     </form>
                 </div>
