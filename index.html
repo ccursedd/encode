@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kittybin.lat - Pastebin Alternative</title>
+    <title>kittybin.lat - Share Text with Everyone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -23,6 +23,7 @@
             border-radius: 0.375rem; 
             border: 1px solid #444444;
             transition: all 0.2s;
+            cursor: pointer;
         }
         .btn:hover { background-color: #444444; }
         .btn-primary {
@@ -33,6 +34,14 @@
         .btn-primary:hover {
             background-color: #cccccc;
             border-color: #cccccc;
+        }
+        .btn-danger {
+            background-color: #330000;
+            color: #ff6666;
+            border: 1px solid #660000;
+        }
+        .btn-danger:hover {
+            background-color: #440000;
         }
         .input { 
             background-color: #1a1a1a; 
@@ -49,11 +58,6 @@
             font-size: 0.75rem; 
             border: 1px solid #333333;
         }
-        .badge-admin { background-color: #222222; color: #ffffff; border-color: #666666; }
-        .badge-manager { background-color: #222222; color: #cccccc; }
-        .badge-mod { background-color: #222222; color: #999999; }
-        .badge-user { background-color: #111111; color: #666666; }
-        .badge-council { background-color: #222222; color: #aaaaaa; }
         .toast {
             position: fixed;
             bottom: 20px;
@@ -65,6 +69,7 @@
             border-radius: 0.5rem;
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            max-width: 300px;
         }
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
@@ -82,6 +87,60 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .copy-btn {
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #333333;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        .copy-btn:hover {
+            background-color: #333333;
+        }
+        .share-url {
+            background-color: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #333333;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid #333333;
+            object-fit: cover;
+        }
+        .banner-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #333333;
+            object-fit: cover;
+            border-radius: 0.375rem;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #111111;
+            border: 1px solid #333333;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="bg-primary text-white">
@@ -89,17 +148,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="/" class="text-2xl font-bold text-white flex items-center">
-                        <span class="mr-2">🐱</span>
+                    <a href="/" class="text-2xl font-bold text-white flex items-center" data-link>
                         <span>kittybin.lat</span>
                     </a>
                     <div class="hidden md:flex space-x-1">
                         <a href="/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Home</a>
                         <a href="/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Add Paste</a>
-                        <a href="/hall-of-autism" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Hall of Autism</a>
-                        <a href="/upgrades" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Upgrades</a>
-                        <a href="/tos" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>TOS</a>
                         <a href="/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>Users</a>
+                        <a href="/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md" data-link>About</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -120,13 +176,14 @@
     <footer class="border-t border-custom bg-secondary mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="text-center text-sm text-gray-500">
-                <p>© 2026 kittybin.lat - Share text anonymously with the world</p>
-                <p class="mt-2">🐱 Pure black and white, just like your terminal</p>
+                <p>© 2026 kittybin.lat - Share text with everyone, forever</p>
+                <p class="mt-2">Every paste gets its own permanent link</p>
             </div>
         </div>
     </footer>
 
     <div id="toastContainer"></div>
+    <div id="modalContainer"></div>
 
     <script type="module">
         import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -142,19 +199,30 @@
         let currentSession = null;
 
         // Toast notification function
-        function showToast(message, type = 'info') {
+        function showToast(message, type = 'info', duration = 3000) {
             const toast = document.createElement('div');
             toast.className = 'toast';
+            const prefix = type === 'success' ? '✓' : type === 'error' ? '✗' : '●';
             toast.innerHTML = `
                 <div class="flex items-center space-x-2">
-                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : '🐱'}</span>
+                    <span>${prefix}</span>
                     <span>${message}</span>
                 </div>
             `;
             document.getElementById('toastContainer').appendChild(toast);
             setTimeout(() => {
                 toast.remove();
-            }, 3000);
+            }, duration);
+        }
+
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy', 'error');
+            }
         }
 
         // Check for existing session
@@ -264,9 +332,7 @@
                 if (path === '/') await renderHome();
                 else if (path === '/add') await renderAddPaste();
                 else if (path === '/users') await renderUsers();
-                else if (path === '/hall-of-autism') renderHallOfAutism();
-                else if (path === '/upgrades') renderUpgrades();
-                else if (path === '/tos') renderTOS();
+                else if (path === '/about') renderAbout();
                 else if (path === '/login') renderLogin();
                 else if (path === '/signup') renderSignup();
                 else if (path.startsWith('/paste/')) {
@@ -289,13 +355,110 @@
             }
         }
 
+        // Profile editing modal
+        function openEditProfileModal(profile) {
+            const modalContainer = document.getElementById('modalContainer');
+            modalContainer.innerHTML = `
+                <div class="modal" id="editProfileModal">
+                    <div class="modal-content">
+                        <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+                        
+                        <form id="editProfileForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Username</label>
+                                <input type="text" id="editUsername" class="input" value="${profile.username}" required minlength="3" maxlength="30">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Bio</label>
+                                <textarea id="editBio" class="input" rows="3" maxlength="500">${profile.bio || ''}</textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Avatar URL</label>
+                                <input type="url" id="editAvatarUrl" class="input" value="${profile.avatar_url || ''}" placeholder="https://example.com/avatar.jpg">
+                                ${profile.avatar_url ? `<img src="${profile.avatar_url}" class="avatar-preview mt-2">` : ''}
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Banner URL</label>
+                                <input type="url" id="editBannerUrl" class="input" value="${profile.banner_url || ''}" placeholder="https://example.com/banner.jpg">
+                                ${profile.banner_url ? `<img src="${profile.banner_url}" class="banner-preview mt-2">` : ''}
+                            </div>
+                            
+                            <div class="flex space-x-2 pt-4">
+                                <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
+                                <button type="button" id="cancelEditBtn" class="btn flex-1">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('editUsername').value;
+                const bio = document.getElementById('editBio').value;
+                const avatar_url = document.getElementById('editAvatarUrl').value;
+                const banner_url = document.getElementById('editBannerUrl').value;
+
+                // Check if username is taken
+                if (username !== profile.username) {
+                    const { data: existingUser } = await supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('username', username)
+                        .single();
+
+                    if (existingUser) {
+                        showToast('Username already taken', 'error');
+                        return;
+                    }
+                }
+
+                const { error } = await supabase
+                    .from('profiles')
+                    .update({
+                        username,
+                        bio,
+                        avatar_url: avatar_url || null,
+                        banner_url: banner_url || null
+                    })
+                    .eq('id', profile.id);
+
+                if (error) {
+                    showToast('Error updating profile: ' + error.message, 'error');
+                } else {
+                    showToast('Profile updated successfully!', 'success');
+                    closeModal();
+                    if (currentUser.id === profile.id) {
+                        currentUser.username = username;
+                        currentUser.bio = bio;
+                        currentUser.avatar_url = avatar_url;
+                        currentUser.banner_url = banner_url;
+                        updateAuthButtons();
+                    }
+                    navigate(`/user/${username}`);
+                }
+            });
+
+            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+            document.getElementById('editProfileModal').addEventListener('click', (e) => {
+                if (e.target.id === 'editProfileModal') closeModal();
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
+        }
+
         // Render functions
         async function renderHome() {
             const { data: pastes, error } = await supabase
                 .from('pastes')
                 .select('*, profiles(username, avatar_url, role)')
                 .order('created_at', { ascending: false })
-                .limit(100);
+                .limit(50);
 
             if (error) throw error;
 
@@ -303,14 +466,14 @@
             app.innerHTML = `
                 <div class="space-y-6">
                     <div class="bg-secondary rounded-lg p-6 border border-custom">
-                        <div class="text-sm text-gray-400 mb-2 font-bold">🐱 READ TOS BEFORE POSTING! Pastes that violate our terms WILL be removed.</div>
-                        <div class="text-sm text-gray-500">Login or register to manage your pastes.</div>
+                        <div class="text-sm text-gray-400 mb-2 font-bold">Share text with everyone - Every paste gets a permanent link!</div>
+                        <div class="text-sm text-gray-500">Create a paste and share the URL with anyone. No login required to view.</div>
                     </div>
 
                     <div class="bg-secondary rounded-lg border border-custom">
                         <div class="p-4 border-b border-custom flex justify-between items-center">
-                            <h2 class="font-semibold">Recent Pastes</h2>
-                            <span class="text-sm text-gray-500">Showing ${pastes?.length || 0} pastes</span>
+                            <h2 class="font-semibold">Recent Public Pastes</h2>
+                            <span class="text-sm text-gray-500">${pastes?.length || 0} pastes</span>
                         </div>
                         
                         <div class="overflow-x-auto">
@@ -321,6 +484,7 @@
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Views</th>
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Created by</th>
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Added</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Share</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -334,18 +498,37 @@
                                                 <a href="/user/${paste.profiles?.username}" class="text-white hover:underline" data-link>${paste.profiles?.username || 'Anonymous'}</a>
                                             </td>
                                             <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
+                                            <td class="p-4">
+                                                <button class="copy-btn share-paste-btn" data-url="${window.location.origin}/paste/${paste.id}">
+                                                    Copy Link
+                                                </button>
+                                            </td>
                                         </tr>
                                     `).join('') : `
                                         <tr>
-                                            <td colspan="4" class="p-4 text-center text-gray-400">No pastes yet</td>
+                                            <td colspan="5" class="p-4 text-center text-gray-400">No pastes yet. Be the first to create one!</td>
                                         </tr>
                                     `}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <div class="bg-secondary rounded-lg border border-custom p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2">Want to share something?</h3>
+                        <p class="text-gray-400 mb-4">Create a paste and get a permanent link to share with everyone</p>
+                        <a href="/add" class="btn btn-primary inline-block" data-link>Create a Paste</a>
+                    </div>
                 </div>
             `;
+
+            // Add share button listeners
+            document.querySelectorAll('.share-paste-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const url = btn.dataset.url;
+                    copyToClipboard(url);
+                });
+            });
         }
 
         async function renderAddPaste() {
@@ -358,27 +541,25 @@
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="max-w-2xl mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6 flex items-center">
-                        <span class="mr-2">🐱</span> Create New Paste
-                    </h2>
+                    <h2 class="text-xl font-bold mb-6">Create Shareable Paste</h2>
                     
                     <form id="pasteForm" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Title (no special chars)</label>
-                            <input type="text" id="pasteTitle" class="input" placeholder="My awesome paste" maxlength="100" pattern="[A-Za-z0-9 ]+" required>
+                            <label class="block text-sm font-medium mb-2">Title</label>
+                            <input type="text" id="pasteTitle" class="input" placeholder="My awesome paste" maxlength="100" required>
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium mb-2">Content</label>
-                            <textarea id="pasteContent" rows="15" class="input font-mono" placeholder="Enter your text here..." required></textarea>
+                            <textarea id="pasteContent" rows="15" class="input font-mono" placeholder="Enter your text here... (supports code, plain text, anything)" required></textarea>
                         </div>
                         
                         <div class="flex items-center space-x-4">
-                            <button type="submit" class="btn btn-primary">Create Paste</button>
+                            <button type="submit" class="btn btn-primary">Create Shareable Link</button>
                             <button type="button" id="clearBtn" class="btn">Clear</button>
                         </div>
                         
-                        <p class="text-xs text-gray-500">Please note that all posted information is publicly available and must follow our TOS.</p>
+                        <p class="text-xs text-gray-500">Your paste will get a permanent link that anyone can view. Share it with the world!</p>
                     </form>
                 </div>
             `;
@@ -408,15 +589,83 @@
                 if (error) {
                     showToast('Error creating paste: ' + error.message, 'error');
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Paste';
+                    submitBtn.textContent = 'Create Shareable Link';
                 } else if (data) {
-                    showToast('Paste created successfully!', 'success');
+                    showToast('Paste created! Share the link with everyone', 'success');
                     navigate(`/paste/${data.id}`);
                 }
             });
 
             document.getElementById('clearBtn').addEventListener('click', () => {
                 document.getElementById('pasteContent').value = '';
+            });
+        }
+
+        async function renderPaste(pasteId) {
+            const { data: paste, error } = await supabase
+                .from('pastes')
+                .select('*, profiles(username, avatar_url, role)')
+                .eq('id', pasteId)
+                .single();
+
+            if (error || !paste) {
+                showToast('Paste not found', 'error');
+                navigate('/');
+                return;
+            }
+
+            // Increment views
+            await supabase
+                .from('pastes')
+                .update({ views: (paste.views || 0) + 1 })
+                .eq('id', pasteId);
+
+            const shareUrl = window.location.href;
+
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-secondary rounded-lg border border-custom p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h1 class="text-2xl font-bold">${paste.title}</h1>
+                            <button class="copy-btn" id="sharePasteBtn">
+                                Copy Link
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 text-sm text-gray-400 mb-4">
+                            <span>${(paste.views || 0) + 1} views</span>
+                            <span>•</span>
+                            <a href="/user/${paste.profiles?.username}" class="text-white hover:underline" data-link>${paste.profiles?.username || 'Anonymous'}</a>
+                            <span>•</span>
+                            <span>${new Date(paste.created_at).toLocaleString()}</span>
+                        </div>
+
+                        <div class="share-url mb-4 flex justify-between items-center">
+                            <span class="truncate">${shareUrl}</span>
+                            <button class="copy-btn ml-2" id="copyUrlBtn">Copy</button>
+                        </div>
+                        
+                        <pre class="bg-tertiary p-4 rounded-md overflow-x-auto font-mono text-sm border border-custom whitespace-pre-wrap">${paste.content}</pre>
+                        
+                        <div class="mt-4 flex space-x-2">
+                            <button class="copy-btn" id="copyContentBtn">Copy Content</button>
+                            <a href="/add" class="copy-btn" data-link>Create Your Own</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('sharePasteBtn')?.addEventListener('click', () => {
+                copyToClipboard(shareUrl);
+            });
+
+            document.getElementById('copyUrlBtn')?.addEventListener('click', () => {
+                copyToClipboard(shareUrl);
+            });
+
+            document.getElementById('copyContentBtn')?.addEventListener('click', () => {
+                copyToClipboard(paste.content);
             });
         }
 
@@ -432,23 +681,20 @@
             app.innerHTML = `
                 <div class="bg-secondary rounded-lg border border-custom">
                     <div class="p-4 border-b border-custom">
-                        <h2 class="text-xl font-bold flex items-center">
-                            <span class="mr-2">🐱</span> Users
-                        </h2>
-                        <p class="text-sm text-gray-500 mt-1">Showing ${users?.length || 0} users</p>
+                        <h2 class="text-xl font-bold">Users</h2>
+                        <p class="text-sm text-gray-500 mt-1">${users?.length || 0} users sharing content</p>
                     </div>
                     
                     <div class="p-4 border-b border-custom">
-                        <input type="text" id="userSearch" placeholder="Search username..." class="input w-full md:w-64">
+                        <input type="text" id="userSearch" placeholder="Search users..." class="input w-full md:w-64">
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-tertiary">
                                 <tr class="border-b border-custom">
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">Username</th>
+                                    <th class="text-left p-4 text-sm font-medium text-gray-400">User</th>
                                     <th class="text-left p-4 text-sm font-medium text-gray-400">Pastes</th>
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">Comments</th>
                                     <th class="text-left p-4 text-sm font-medium text-gray-400">Joined</th>
                                     <th class="text-left p-4 text-sm font-medium text-gray-400">Role</th>
                                 </tr>
@@ -463,10 +709,9 @@
                                             </a>
                                         </td>
                                         <td class="p-4">${user.paste_count || 0}</td>
-                                        <td class="p-4">${user.comment_count || 0}</td>
                                         <td class="p-4 text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
                                         <td class="p-4">
-                                            <span class="badge ${user.role === 'Admin' ? 'badge-admin' : user.role === 'Manager' ? 'badge-manager' : user.role === 'Mod' ? 'badge-mod' : user.role === 'Council' ? 'badge-council' : 'badge-user'}">
+                                            <span class="badge">
                                                 ${user.role || 'User'}
                                             </span>
                                         </td>
@@ -491,53 +736,15 @@
                             </a>
                         </td>
                         <td class="p-4">${user.paste_count || 0}</td>
-                        <td class="p-4">${user.comment_count || 0}</td>
                         <td class="p-4 text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
                         <td class="p-4">
-                            <span class="badge ${user.role === 'Admin' ? 'badge-admin' : user.role === 'Manager' ? 'badge-manager' : user.role === 'Mod' ? 'badge-mod' : user.role === 'Council' ? 'badge-council' : 'badge-user'}">
+                            <span class="badge">
                                 ${user.role || 'User'}
                             </span>
                         </td>
                     </tr>
-                `).join('') || '<tr><td colspan="5" class="p-4 text-center text-gray-400">No users found</td></tr>';
+                `).join('') || '<tr><td colspan="4" class="p-4 text-center text-gray-400">No users found</td></tr>';
             });
-        }
-
-        async function renderPaste(pasteId) {
-            const { data: paste, error } = await supabase
-                .from('pastes')
-                .select('*, profiles(username, avatar_url, role)')
-                .eq('id', pasteId)
-                .single();
-
-            if (error || !paste) {
-                showToast('Paste not found', 'error');
-                navigate('/');
-                return;
-            }
-
-            // Increment views
-            await supabase
-                .from('pastes')
-                .update({ views: (paste.views || 0) + 1 })
-                .eq('id', pasteId);
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-secondary rounded-lg border border-custom p-6">
-                        <h1 class="text-2xl font-bold mb-2">${paste.title}</h1>
-                        <div class="flex items-center space-x-4 text-sm text-gray-400 mb-4">
-                            <span>${(paste.views || 0) + 1} views</span>
-                            <span>•</span>
-                            <a href="/user/${paste.profiles?.username}" class="text-white hover:underline" data-link>${paste.profiles?.username || 'Anonymous'}</a>
-                            <span>•</span>
-                            <span>${new Date(paste.created_at).toLocaleString()}</span>
-                        </div>
-                        <pre class="bg-tertiary p-4 rounded-md overflow-x-auto font-mono text-sm border border-custom whitespace-pre-wrap">${paste.content}</pre>
-                    </div>
-                </div>
-            `;
         }
 
         async function renderUserProfile(username) {
@@ -559,6 +766,8 @@
                 .eq('user_id', profile.id)
                 .order('created_at', { ascending: false });
 
+            const isOwnProfile = currentUser?.id === profile.id;
+
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="space-y-6">
@@ -578,11 +787,16 @@
                                     }
                                 </div>
                                 <div class="ml-4 flex-1">
-                                    <h1 class="text-2xl font-bold">${profile.username}</h1>
+                                    <div class="flex items-center space-x-3">
+                                        <h1 class="text-2xl font-bold">${profile.username}</h1>
+                                        ${isOwnProfile ? `
+                                            <button id="editProfileBtn" class="btn text-sm py-1">Edit Profile</button>
+                                        ` : ''}
+                                    </div>
                                     <p class="text-gray-400">Joined ${new Date(profile.created_at).toLocaleDateString()}</p>
                                 </div>
                                 ${profile.role ? `
-                                    <span class="badge ${profile.role === 'Admin' ? 'badge-admin' : profile.role === 'Manager' ? 'badge-manager' : profile.role === 'Mod' ? 'badge-mod' : profile.role === 'Council' ? 'badge-council' : 'badge-user'}">
+                                    <span class="badge">
                                         ${profile.role}
                                     </span>
                                 ` : ''}
@@ -591,21 +805,14 @@
                             ${profile.bio ? `<p class="text-gray-300 mb-4">${profile.bio}</p>` : ''}
                             
                             <div class="flex space-x-6 text-sm">
-                                <div><span class="font-bold">${profile.paste_count || 0}</span> <span class="text-gray-400">pastes</span></div>
-                                <div><span class="font-bold">${profile.comment_count || 0}</span> <span class="text-gray-400">comments</span></div>
+                                <div><span class="font-bold">${profile.paste_count || 0}</span> <span class="text-gray-400">shared pastes</span></div>
                             </div>
-
-                            ${currentUser?.id === profile.id ? `
-                                <div class="mt-4">
-                                    <button id="editBioBtn" class="btn">Edit Bio</button>
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
 
                     <div class="bg-secondary rounded-lg border border-custom">
                         <div class="p-4 border-b border-custom">
-                            <h2 class="font-semibold">Pastes by ${profile.username}</h2>
+                            <h2 class="font-semibold">Pastes shared by ${profile.username}</h2>
                         </div>
                         
                         <div class="overflow-x-auto">
@@ -615,6 +822,7 @@
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Title</th>
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Views</th>
                                         <th class="text-left p-4 text-sm font-medium text-gray-400">Added</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Share</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -625,10 +833,15 @@
                                             </td>
                                             <td class="p-4 text-gray-400">${paste.views || 0}</td>
                                             <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
+                                            <td class="p-4">
+                                                <button class="copy-btn share-paste-btn" data-url="${window.location.origin}/paste/${paste.id}">
+                                                    Copy Link
+                                                </button>
+                                            </td>
                                         </tr>
                                     `).join('') : `
                                         <tr>
-                                            <td colspan="3" class="p-4 text-center text-gray-400">No pastes yet</td>
+                                            <td colspan="4" class="p-4 text-center text-gray-400">No pastes shared yet</td>
                                         </tr>
                                     `}
                                 </tbody>
@@ -638,62 +851,54 @@
                 </div>
             `;
 
-            if (document.getElementById('editBioBtn')) {
-                document.getElementById('editBioBtn').addEventListener('click', async () => {
-                    const newBio = prompt('Enter your bio:', profile.bio || '');
-                    if (newBio !== null) {
-                        const { error } = await supabase
-                            .from('profiles')
-                            .update({ bio: newBio })
-                            .eq('id', profile.id);
-                        
-                        if (!error) {
-                            showToast('Bio updated successfully!', 'success');
-                            renderUserProfile(username);
-                        }
-                    }
+            if (document.getElementById('editProfileBtn')) {
+                document.getElementById('editProfileBtn').addEventListener('click', () => {
+                    openEditProfileModal(profile);
                 });
             }
+
+            // Add share button listeners
+            document.querySelectorAll('.share-paste-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const url = btn.dataset.url;
+                    copyToClipboard(url);
+                });
+            });
         }
 
-        function renderHallOfAutism() {
+        function renderAbout() {
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="bg-secondary rounded-lg border border-custom p-6">
-                    <h1 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="mr-2">🏆</span> Hall of Autism
-                    </h1>
-                    <p class="text-gray-400">Coming soon... 🐱</p>
-                </div>
-            `;
-        }
-
-        function renderUpgrades() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="bg-secondary rounded-lg border border-custom p-6">
-                    <h1 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="mr-2">⬆️</span> Upgrades
-                    </h1>
-                    <p class="text-gray-400">Coming soon... 🐱</p>
-                </div>
-            `;
-        }
-
-        function renderTOS() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="bg-secondary rounded-lg border border-custom p-6">
-                    <h1 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="mr-2">📜</span> Terms of Service
-                    </h1>
+                    <h1 class="text-2xl font-bold mb-4">About kittybin.lat</h1>
+                    
                     <div class="space-y-4 text-gray-300">
-                        <p><span class="font-bold text-white">1.</span> All pastes must comply with our guidelines.</p>
-                        <p><span class="font-bold text-white">2.</span> No illegal content or activities.</p>
-                        <p><span class="font-bold text-white">3.</span> Respect other users and their content.</p>
-                        <p><span class="font-bold text-white">4.</span> We reserve the right to remove any content.</p>
-                        <p><span class="font-bold text-white">5.</span> Don't post personal information.</p>
-                        <p><span class="font-bold text-white">6.</span> Be nice to the kitties. 🐱</p>
+                        <p>kittybin.lat is a simple pastebin service where you can share text with everyone.</p>
+                        
+                        <div class="bg-tertiary p-4 rounded-lg border border-custom">
+                            <h2 class="font-bold text-lg mb-2">Features</h2>
+                            <ul class="list-disc list-inside space-y-1 text-gray-400">
+                                <li>Create permanent, shareable links for any text</li>
+                                <li>No login required to view pastes</li>
+                                <li>Every paste gets its own unique URL</li>
+                                <li>View counts on every paste</li>
+                                <li>User profiles to track your shared content</li>
+                                <li>Copy links and content with one click</li>
+                                <li>Customize your profile with avatar, banner, and bio</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-tertiary p-4 rounded-lg border border-custom">
+                            <h2 class="font-bold text-lg mb-2">How to Share</h2>
+                            <ol class="list-decimal list-inside space-y-1 text-gray-400">
+                                <li>Create an account (or login)</li>
+                                <li>Click "Add Paste" and enter your content</li>
+                                <li>Get your permanent link</li>
+                                <li>Share the link with anyone!</li>
+                            </ol>
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-4">Every paste is publicly accessible. Share responsibly!</p>
                     </div>
                 </div>
             `;
@@ -708,9 +913,7 @@
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="max-w-md mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6 flex items-center">
-                        <span class="mr-2">🐱</span> Login to kittybin.lat
-                    </h2>
+                    <h2 class="text-xl font-bold mb-6">Login to kittybin.lat</h2>
                     
                     <form id="loginForm" class="space-y-4">
                         <div>
@@ -769,9 +972,7 @@
             const app = document.getElementById('app');
             app.innerHTML = `
                 <div class="max-w-md mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6 flex items-center">
-                        <span class="mr-2">🐱</span> Join kittybin.lat
-                    </h2>
+                    <h2 class="text-xl font-bold mb-6">Join kittybin.lat</h2>
                     
                     <form id="signupForm" class="space-y-4">
                         <div>
@@ -804,6 +1005,18 @@
                 const email = document.getElementById('signupEmail').value;
                 const password = document.getElementById('signupPassword').value;
                 const submitBtn = e.target.querySelector('button[type="submit"]');
+                
+                // Check if username is taken
+                const { data: existingUser } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('username', username)
+                    .single();
+
+                if (existingUser) {
+                    showToast('Username already taken', 'error');
+                    return;
+                }
                 
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
