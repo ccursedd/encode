@@ -3,1345 +3,810 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kittybin.lat - Modern Pastebin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>kittybin.org</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #0a0a0a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
+            color: #e0e0e0;
+            padding: 20px;
         }
-        
-        /* Modern color palette */
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #121212;
-            --bg-tertiary: #1e1e1e;
-            --bg-card: #181818;
-            --border-color: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --text-muted: #6b6b6b;
-            --accent: #ffffff;
-            --accent-hover: #e0e0e0;
-        }
-        
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3a3a3a;
-        }
-        
-        /* Modern card styles */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        
-        .card:hover {
-            border-color: #3a3a3a;
-        }
-        
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        /* Modern button styles */
-        .btn {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .btn:hover {
-            background: #252525;
-            border-color: #3a3a3a;
-        }
-        
-        .btn-primary {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #ffffff;
-            font-weight: 600;
-        }
-        
-        .btn-primary:hover {
-            background: #e0e0e0;
-            border-color: #e0e0e0;
-        }
-        
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-        }
-        
-        /* Modern input styles */
-        .input {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            width: 100%;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-        
-        .input:focus {
-            outline: none;
-            border-color: #4a4a4a;
-            background: #252525;
-        }
-        
-        .input::placeholder {
-            color: var(--text-muted);
-        }
-        
-        /* Modern badge */
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-        
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            z-index: 1000;
-            animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%) translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0) translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        /* Loading spinner */
-        .loading {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #2a2a2a;
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Copy button */
-        .copy-btn {
-            cursor: pointer;
-            padding: 0.375rem 0.75rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
-        
-        .copy-btn:hover {
-            background: #252525;
-            color: white;
-            border-color: #3a3a3a;
-        }
-        
-        /* Profile banner */
-        .profile-banner {
-            height: 200px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .profile-banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid var(--bg-primary);
-            background: var(--bg-tertiary);
-            position: absolute;
-            bottom: -60px;
-            left: 32px;
-            object-fit: cover;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .profile-avatar-placeholder {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid var(--bg-primary);
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            position: absolute;
-            bottom: -60px;
-            left: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Share URL box */
-        .share-url {
-            background: var(--bg-tertiary);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.875rem;
-            word-break: break-all;
-            color: var(--text-secondary);
-        }
-        
-        /* Code block */
-        pre {
-            background: var(--bg-tertiary);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        /* Table styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        /* Navigation */
-        .nav-link {
-            color: var(--text-secondary);
-            transition: all 0.2s;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        .nav-link:hover {
-            background: var(--bg-tertiary);
-            color: white;
-        }
-        
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Container */
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1.5rem;
+            background: #000000;
+            border: 2px solid #333333;
+            padding: 20px 25px;
         }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(135deg, #ffffff, #a0a0a0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #333333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
-        
-        /* Stats card */
-        .stat-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #cccccc;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 5px 0;
+            cursor: pointer;
+        }
+
+        .nav-links a.active {
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .username-display {
+            color: #00ff00;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #1a1a1a;
+            color: #ff6666;
+            border: 2px solid #444;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #222;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #333333;
+            background: #111111;
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #666666;
+        }
+
+        .pastes-header {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: #aaaaaa;
+            border-left: 4px solid #444;
+            padding-left: 10px;
+        }
+
+        .section-card {
+            border: 2px solid #333333;
+            margin-bottom: 30px;
+            background: #0a0a0a;
+        }
+
+        .section-header {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 10px 15px;
+            font-weight: 700;
+            font-size: 1rem;
+            border-bottom: 2px solid #333333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .paste-table, .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .paste-table th, .user-table th {
+            text-align: left;
+            padding: 15px 10px 8px 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-bottom: 2px solid #333333;
+            color: #aaaaaa;
+        }
+
+        .paste-table td, .user-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #222222;
+            font-size: 0.9rem;
+            color: #dddddd;
+        }
+
+        .views {
+            background: #1a1a1a;
+            padding: 3px 10px;
+            border: 1px solid #333;
+            color: #ffffff;
+        }
+
+        .user-badge {
+            color: #888888;
+            margin-left: 5px;
+            font-style: italic;
+        }
+
+        .create-paste {
+            border: 2px solid #333333;
+            padding: 25px;
+            margin-bottom: 30px;
+            background: #0a0a0a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #333333;
+            background: #111111;
+            color: #ffffff;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #666666;
+        }
+
+        .create-btn {
+            background: #00aa00;
+            color: white;
+            border: 2px solid #00ff00;
+            padding: 12px 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .create-btn:hover {
+            background: #00cc00;
+        }
+
+        .cancel-btn {
+            background: #333;
+            color: white;
+            border: 2px solid #666;
+            padding: 12px 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: #444;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .auth-box {
+            width: 450px;
+            border: 2px solid #333333;
+            background: #0a0a0a;
+        }
+
+        .auth-header {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #333333;
+        }
+
+        .auth-form {
+            padding: 25px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #333333;
+            background: #111111;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #444444;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            background: #222222;
+        }
+
+        .auth-switch {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+
+        .auth-switch a {
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .error-message {
+            color: #ff6666;
+            margin-top: 10px;
             text-align: center;
         }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
+
+        .success-message {
+            color: #00ff00;
+            margin-top: 10px;
+            text-align: center;
         }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .no-data {
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border: 2px dashed #333;
         }
     </style>
 </head>
-<body class="bg-primary">
-    <!-- Modern Navigation -->
-    <nav class="border-b border-custom bg-secondary sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
-        <div class="container mx-auto">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="#/" class="text-2xl font-bold text-white tracking-tight hover:opacity-80 transition" id="home-link">
-                        kittybin<span class="text-gray-500">.lat</span>
-                    </a>
-                    <div class="hidden md:flex items-center space-x-1">
-                        <a href="#/" class="nav-link">Home</a>
-                        <a href="#/add" class="nav-link">New Paste</a>
-                        <a href="#/users" class="nav-link">Users</a>
-                        <a href="#/about" class="nav-link">About</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div id="authButtons"></div>
-                </div>
+<body>
+<div class="container">
+    <div class="top-bar">
+        <div class="logo-area">
+            <div class="logo">kittybin.org</div>
+            <div class="nav-links">
+                <a onclick="showPage('index')" id="nav-index" class="active">Add Paste</a>
+                <a onclick="showPage('users')" id="nav-users">Users</a>
+                <a onclick="showPage('login')" id="nav-login">Login</a>
+                <a onclick="showPage('signup')" id="nav-signup">Sign Up</a>
             </div>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container mx-auto py-8 flex-grow">
-        <div id="app">
-            <div class="flex justify-center items-center h-64">
-                <div class="loading"></div>
-            </div>
+        <div class="user-status" id="userStatus" style="display: none;">
+            <span class="username-display" id="currentUsername"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-    </main>
+    </div>
 
-    <!-- Modern Footer -->
-    <footer class="border-t border-custom bg-secondary mt-auto">
-        <div class="container mx-auto py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="font-bold text-lg mb-3">kittybin.lat</h3>
-                    <p class="text-sm text-gray-500">Share text with everyone, forever. Every paste gets its own permanent link.</p>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-3">Quick Links</h3>
-                    <ul class="space-y-2 text-sm text-gray-500">
-                        <li><a href="#/" class="hover:text-white transition">Home</a></li>
-                        <li><a href="#/add" class="hover:text-white transition">New Paste</a></li>
-                        <li><a href="#/users" class="hover:text-white transition">Users</a></li>
-                        <li><a href="#/about" class="hover:text-white transition">About</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-3">Stats</h3>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalPastes">0</div>
-                        <div class="stat-label">Total Pastes</div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center text-sm text-gray-600 mt-8 pt-8 border-t border-custom">
-                <p>© 2026 kittybin.lat - Share text with everyone, forever</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Toast Container -->
-    <div id="toastContainer"></div>
+    <div class="search-section">
+        <input type="text" placeholder="Search pastes..." class="search-input" id="global-search" oninput="filterPastes()">
+    </div>
     
-    <!-- Modal Container -->
-    <div id="modalContainer"></div>
+    <!-- INDEX PAGE -->
+    <div id="page-index" class="page active">
+        <div class="section-header">
+            <span>Create New Paste</span>
+            <span id="pasteCount">0 total pastes</span>
+        </div>
+        
+        <div class="create-paste">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="pasteTitle" placeholder="Enter paste title" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="pasteContent" placeholder="Enter your paste content here..."></textarea>
+            </div>
+            <div>
+                <button class="create-btn" onclick="createPaste()"><i class="fas fa-save"></i> Save Paste</button>
+                <button class="cancel-btn" onclick="clearPasteForm()">Clear</button>
+            </div>
+        </div>
 
-    <script type="module">
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        <div class="section-header">Recent Pastes</div>
+        <div class="section-card" id="pastesContainer">
+            <table class="paste-table" id="pastesTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Created by</th>
+                        <th>Added</th>
+                    </tr>
+                </thead>
+                <tbody id="pastesTableBody">
+                    <tr>
+                        <td colspan="4" class="no-data">No pastes yet. Be the first to create one!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        // Initialize Supabase
-        const supabase = createClient(
-            'https://ylgtgecqhdhakzbjdkqq.supabase.co',
-            'sb_publishable_ILF6pER_bdL8GppxOzfumg_xsDoMA6T'
-        );
+    <!-- USERS PAGE -->
+    <div id="page-users" class="page">
+        <div class="pastes-header">
+            <i class="fas fa-users"></i> Registered Users
+        </div>
 
-        // State
-        let currentUser = null;
-        let currentSession = null;
-        let totalPastes = 0;
+        <div class="section-card">
+            <table class="user-table" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Pastes</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="4" class="no-data">No users registered yet. Sign up to be the first!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        // Toast notification function
-        function showToast(message, type = 'info', duration = 3000) {
-            const toast = document.getElementById('toastContainer');
-            const toastEl = document.createElement('div');
-            toastEl.className = 'toast';
-            
-            const icons = {
-                success: '✓',
-                error: '✗',
-                info: '●'
-            };
-            
-            toastEl.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <span class="text-lg ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-gray-400'}">${icons[type]}</span>
-                    <span class="text-sm">${message}</span>
+    <!-- LOGIN PAGE -->
+    <div id="page-login" class="page">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">Login</div>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" class="auth-input">
+                    </div>
+                    <button class="auth-btn" onclick="login()">Login</button>
+                    <div class="auth-switch">
+                        Don't have an account? <a onclick="showPage('signup')">Sign Up</a>
+                    </div>
+                    <div id="loginError" class="error-message"></div>
                 </div>
-            `;
-            
-            toast.appendChild(toastEl);
-            
-            setTimeout(() => {
-                toastEl.style.animation = 'slideIn 0.3s reverse';
-                setTimeout(() => toastEl.remove(), 300);
-            }, duration);
+            </div>
+        </div>
+    </div>
+
+    <!-- SIGNUP PAGE -->
+    <div id="page-signup" class="page">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">Sign Up</div>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" class="auth-input">
+                    </div>
+                    <button class="auth-btn" onclick="signup()">Create Account</button>
+                    <div class="auth-switch">
+                        Already have an account? <a onclick="showPage('login')">Login</a>
+                    </div>
+                    <div id="signupError" class="error-message"></div>
+                    <div id="signupSuccess" class="success-message"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== RESET EVERYTHING - START FRESH ==========
+    // Clear any existing data to ensure no default pastes show up
+    localStorage.removeItem('kittybin_users');
+    localStorage.removeItem('kittybin_pastes');
+    localStorage.removeItem('kittybin_currentUser');
+    
+    // Start with COMPLETELY EMPTY arrays
+    let users = [];
+    let pastes = [];
+    let currentUser = null;
+
+    // ========== STORAGE FUNCTIONS ==========
+    function saveUsers() {
+        localStorage.setItem('kittybin_users', JSON.stringify(users));
+    }
+
+    function savePastes() {
+        localStorage.setItem('kittybin_pastes', JSON.stringify(pastes));
+    }
+
+    // Save initial empty state
+    saveUsers();
+    savePastes();
+
+    // ========== UI UPDATE FUNCTIONS ==========
+    function updateUserStatus() {
+        const userStatus = document.getElementById('userStatus');
+        const currentUsername = document.getElementById('currentUsername');
+        
+        if (currentUser) {
+            userStatus.style.display = 'flex';
+            currentUsername.textContent = currentUser.username;
+            document.getElementById('nav-login').style.display = 'none';
+            document.getElementById('nav-signup').style.display = 'none';
+        } else {
+            userStatus.style.display = 'none';
+            document.getElementById('nav-login').style.display = 'inline';
+            document.getElementById('nav-signup').style.display = 'inline';
+        }
+    }
+
+    function displayPastes() {
+        const tbody = document.getElementById('pastesTableBody');
+        const pasteCount = document.getElementById('pasteCount');
+        
+        if (!pastes || pastes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No pastes yet. Be the first to create one!</td></tr>';
+            pasteCount.textContent = '0 total pastes';
+            return;
         }
 
-        // Copy to clipboard
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('Copied to clipboard!', 'success');
-            } catch (err) {
-                showToast('Failed to copy', 'error');
-            }
-        }
-
-        // Get total pastes count
-        async function updateTotalPastes() {
-            const { count, error } = await supabase
-                .from('pastes')
-                .select('*', { count: 'exact', head: true });
-            
-            if (!error) {
-                totalPastes = count;
-                document.getElementById('totalPastes').textContent = count || 0;
-            }
-        }
-
-        // Get current hash path
-        function getHashPath() {
-            return window.location.hash.slice(1) || '/';
-        }
-
-        // Initialize auth
-        async function initAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                currentSession = session;
-                currentUser = session.user;
-                await loadUserProfile(session.user.id);
-            }
-            updateAuthButtons();
-            updateTotalPastes();
-            handleRoute();
-        }
-
-        // Load user profile
-        async function loadUserProfile(userId) {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
-            
-            if (data) {
-                currentUser = { ...currentUser, ...data };
-            } else if (error && error.code === 'PGRST116') {
-                // Create profile if doesn't exist
-                const username = currentUser.email?.split('@')[0] || 'user_' + Math.random().toString(36).substring(7);
-                const { data: newProfile } = await supabase
-                    .from('profiles')
-                    .insert([{ 
-                        id: userId, 
-                        username,
-                        role: 'User',
-                        paste_count: 0,
-                        comment_count: 0
-                    }])
-                    .select()
-                    .single();
-                
-                if (newProfile) {
-                    currentUser = { ...currentUser, ...newProfile };
-                }
-            }
-            updateAuthButtons();
-        }
-
-        // Update auth buttons
-        function updateAuthButtons() {
-            const authDiv = document.getElementById('authButtons');
-            if (currentUser) {
-                authDiv.innerHTML = `
-                    <a href="#/user/${currentUser.username}" class="flex items-center space-x-2">
-                        ${currentUser.avatar_url ? 
-                            `<img src="${currentUser.avatar_url}" class="w-8 h-8 rounded-full border border-custom object-cover">` : 
-                            `<div class="w-8 h-8 rounded-full bg-tertiary border border-custom flex items-center justify-center font-bold text-sm">${currentUser.username?.[0]?.toUpperCase()}</div>`
-                        }
-                    </a>
-                    <button id="logoutBtn" class="btn btn-sm">Logout</button>
-                `;
-                document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-                    await supabase.auth.signOut();
-                    currentUser = null;
-                    currentSession = null;
-                    updateAuthButtons();
-                    window.location.hash = '#/';
-                    showToast('Logged out successfully', 'success');
-                });
-            } else {
-                authDiv.innerHTML = `
-                    <a href="#/login" class="btn btn-sm">Login</a>
-                    <a href="#/signup" class="btn btn-primary btn-sm">Sign Up</a>
-                `;
-            }
-        }
-
-        // Router
-        window.addEventListener('hashchange', () => handleRoute());
-        window.addEventListener('load', () => handleRoute());
-
-        function navigate(path) {
-            window.location.hash = `#${path}`;
-        }
-
-        // Handle navigation clicks
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[href^="#"]');
-            if (link) {
-                e.preventDefault();
-                navigate(link.getAttribute('href').slice(1));
-            }
+        // Only show pastes from users that still exist in the users array
+        const validPastes = pastes.filter(paste => {
+            return users.some(user => user.username === paste.createdBy);
         });
 
-        // Main router
-        async function handleRoute() {
-            const path = getHashPath();
-            const app = document.getElementById('app');
+        if (validPastes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No pastes from existing users</td></tr>';
+            pasteCount.textContent = '0 total pastes';
+            return;
+        }
+
+        // Sort pastes by date (newest first)
+        const sortedPastes = [...validPastes].sort((a, b) => {
+            return new Date(b.added) - new Date(a.added);
+        });
+
+        tbody.innerHTML = '';
+        sortedPastes.forEach(paste => {
+            // Find the user to get their current role
+            const user = users.find(u => u.username === paste.createdBy);
+            const role = user ? user.role : 'User';
             
-            app.innerHTML = `
-                <div class="flex justify-center items-center h-64">
-                    <div class="loading"></div>
-                </div>
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${escapeHtml(paste.title)}</td>
+                <td><span class="views">${paste.views || 0}</span></td>
+                <td>${escapeHtml(paste.createdBy)} ${role !== 'User' ? `<span class="user-badge">[${escapeHtml(role)}]</span>` : ''}</td>
+                <td>${escapeHtml(paste.added)}</td>
             `;
+            tbody.appendChild(row);
+        });
+
+        pasteCount.textContent = `${validPastes.length} total pastes`;
+    }
+
+    function displayUsers() {
+        const tbody = document.getElementById('usersTableBody');
+        
+        if (!users || users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No users registered yet. Sign up to be the first!</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        // Sort users by join date (newest first)
+        const sortedUsers = [...users].sort((a, b) => {
+            return new Date(b.joined) - new Date(a.joined);
+        });
+
+        sortedUsers.forEach(user => {
+            // Count only pastes that exist and belong to this user
+            const userPastes = pastes.filter(p => p.createdBy === user.username).length;
             
-            try {
-                if (path === '/') await renderHome();
-                else if (path === '/add') await renderAddPaste();
-                else if (path === '/users') await renderUsers();
-                else if (path === '/about') renderAbout();
-                else if (path === '/login') renderLogin();
-                else if (path === '/signup') renderSignup();
-                else if (path.startsWith('/paste/')) {
-                    const pasteId = path.split('/')[2];
-                    await renderPaste(pasteId);
-                }
-                else if (path.startsWith('/user/')) {
-                    const username = path.split('/')[2];
-                    await renderUserProfile(username);
-                }
-                else {
-                    window.location.hash = '#/';
-                }
-            } catch (error) {
-                console.error('Route error:', error);
-                app.innerHTML = `
-                    <div class="card p-8 text-center">
-                        <p class="text-red-400 mb-4">Error: ${error.message}</p>
-                        <a href="#/" class="btn btn-primary">Go Home</a>
-                    </div>
-                `;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${escapeHtml(user.username)}</td>
+                <td>${user.role && user.role !== 'User' ? `<span class="user-badge">[${escapeHtml(user.role)}]</span>` : ''}</td>
+                <td>${userPastes}</td>
+                <td>${escapeHtml(user.joined)}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function filterPastes() {
+        const searchTerm = document.getElementById('global-search').value.toLowerCase();
+        const rows = document.querySelectorAll('#pastesTableBody tr');
+        
+        rows.forEach(row => {
+            if (row.classList.contains('no-data')) return;
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm) || searchTerm === '') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
+        });
+    }
+
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // ========== AUTH FUNCTIONS ==========
+    function login() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('loginError');
+
+        if (!username || !password) {
+            errorDiv.textContent = 'Username and password are required';
+            return;
         }
 
-        // Edit profile modal
-        function openEditProfileModal(profile) {
-            const modalContainer = document.getElementById('modalContainer');
-            modalContainer.innerHTML = `
-                <div class="modal" id="editProfileModal">
-                    <div class="modal-content">
-                        <h2 class="text-2xl font-bold mb-6 gradient-text">Edit Profile</h2>
-                        
-                        <form id="editProfileForm" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Username</label>
-                                <input type="text" id="editUsername" class="input" value="${profile.username}" required minlength="3" maxlength="30">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Bio</label>
-                                <textarea id="editBio" class="input" rows="3" maxlength="500" placeholder="Tell us about yourself...">${profile.bio || ''}</textarea>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Avatar URL</label>
-                                <input type="url" id="editAvatarUrl" class="input" value="${profile.avatar_url || ''}" placeholder="https://example.com/avatar.jpg">
-                                ${profile.avatar_url ? `<img src="${profile.avatar_url}" class="w-20 h-20 rounded-full mt-3 border border-custom object-cover">` : ''}
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Banner URL</label>
-                                <input type="url" id="editBannerUrl" class="input" value="${profile.banner_url || ''}" placeholder="https://example.com/banner.jpg">
-                                ${profile.banner_url ? `<img src="${profile.banner_url}" class="w-full h-32 object-cover rounded-lg mt-3 border border-custom">` : ''}
-                            </div>
-                            
-                            <div class="flex space-x-3 pt-4">
-                                <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
-                                <button type="button" id="cancelEditBtn" class="btn flex-1">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+            currentUser = { username: user.username, role: user.role };
+            localStorage.setItem('kittybin_currentUser', JSON.stringify(currentUser));
+            errorDiv.textContent = '';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            showPage('index');
+            updateUserStatus();
+            displayPastes();
+        } else {
+            errorDiv.textContent = 'Invalid username or password';
+        }
+    }
 
-            document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('editUsername').value;
-                const bio = document.getElementById('editBio').value;
-                const avatar_url = document.getElementById('editAvatarUrl').value;
-                const banner_url = document.getElementById('editBannerUrl').value;
+    function signup() {
+        const username = document.getElementById('signupUsername').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword').value;
+        const errorDiv = document.getElementById('signupError');
+        const successDiv = document.getElementById('signupSuccess');
 
-                if (username !== profile.username) {
-                    const { data: existingUser } = await supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('username', username)
-                        .single();
+        errorDiv.textContent = '';
+        successDiv.textContent = '';
 
-                    if (existingUser) {
-                        showToast('Username already taken', 'error');
-                        return;
-                    }
-                }
-
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ username, bio, avatar_url: avatar_url || null, banner_url: banner_url || null })
-                    .eq('id', profile.id);
-
-                if (error) {
-                    showToast('Error updating profile: ' + error.message, 'error');
-                } else {
-                    showToast('Profile updated successfully!', 'success');
-                    closeModal();
-                    if (currentUser && currentUser.id === profile.id) {
-                        currentUser = { ...currentUser, username, bio, avatar_url, banner_url };
-                        updateAuthButtons();
-                    }
-                    navigate(`/user/${username}`);
-                }
-            });
-
-            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
-            document.getElementById('editProfileModal').addEventListener('click', (e) => {
-                if (e.target.id === 'editProfileModal') closeModal();
-            });
+        if (!username || !password) {
+            errorDiv.textContent = 'Username and password are required';
+            return;
         }
 
-        function closeModal() {
-            document.getElementById('modalContainer').innerHTML = '';
+        if (password.length < 3) {
+            errorDiv.textContent = 'Password must be at least 3 characters';
+            return;
         }
 
-        // Render Home
-        async function renderHome() {
-            const { data: pastes } = await supabase
-                .from('pastes')
-                .select('*, profiles(username, avatar_url)')
-                .order('created_at', { ascending: false })
-                .limit(25);
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-6">
-                    <!-- Hero Section -->
-                    <div class="card">
-                        <div class="card-body text-center py-12">
-                            <h1 class="text-4xl font-bold mb-4 gradient-text">Share Text with Everyone</h1>
-                            <p class="text-gray-400 text-lg mb-6">Create permanent, shareable links for any text. No login required to view.</p>
-                            <a href="#/add" class="btn btn-primary px-8 py-3 text-base">Create New Paste</a>
-                        </div>
-                    </div>
-
-                    <!-- Recent Pastes -->
-                    <div class="card">
-                        <div class="card-header flex justify-between items-center">
-                            <h2 class="font-semibold text-lg">Recent Public Pastes</h2>
-                            <span class="text-sm text-gray-500">${pastes?.length || 0} recent</span>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Views</th>
-                                        <th>Author</th>
-                                        <th>Date</th>
-                                        <th>Share</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${pastes?.length ? pastes.map(paste => `
-                                        <tr>
-                                            <td>
-                                                <a href="#/paste/${paste.id}" class="text-white hover:text-gray-300 font-medium">${paste.title}</a>
-                                            </td>
-                                            <td>${paste.views || 0}</td>
-                                            <td>
-                                                <a href="#/user/${paste.profiles?.username}" class="text-gray-400 hover:text-white flex items-center space-x-2">
-                                                    ${paste.profiles?.avatar_url ? 
-                                                        `<img src="${paste.profiles.avatar_url}" class="w-5 h-5 rounded-full">` : 
-                                                        `<div class="w-5 h-5 rounded-full bg-tertiary flex items-center justify-center text-xs">${paste.profiles?.username?.[0]?.toUpperCase()}</div>`
-                                                    }
-                                                    <span>${paste.profiles?.username || 'Anonymous'}</span>
-                                                </a>
-                                            </td>
-                                            <td class="text-gray-500">${new Date(paste.created_at).toLocaleDateString()}</td>
-                                            <td>
-                                                <button class="copy-btn share-paste-btn" data-url="${window.location.href.split('#')[0]}#/paste/${paste.id}">
-                                                    Copy Link
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('') : `
-                                        <tr>
-                                            <td colspan="5" class="text-center py-8 text-gray-500">No pastes yet. Be the first to create one!</td>
-                                        </tr>
-                                    `}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.querySelectorAll('.share-paste-btn').forEach(btn => {
-                btn.addEventListener('click', () => copyToClipboard(btn.dataset.url));
-            });
+        if (password !== confirmPassword) {
+            errorDiv.textContent = 'Passwords do not match';
+            return;
         }
 
-        // Render Add Paste
-        async function renderAddPaste() {
-            if (!currentUser) {
-                showToast('Please login to create a paste', 'error');
-                navigate('/login');
-                return;
-            }
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-2xl mx-auto card">
-                    <div class="card-header">
-                        <h2 class="text-xl font-bold gradient-text">Create New Paste</h2>
-                    </div>
-                    
-                    <div class="card-body">
-                        <form id="pasteForm" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Title</label>
-                                <input type="text" id="pasteTitle" class="input" placeholder="My awesome paste" maxlength="100" required>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Content</label>
-                                <textarea id="pasteContent" rows="12" class="input font-mono" placeholder="Enter your text here..." required></textarea>
-                            </div>
-                            
-                            <div class="flex space-x-3">
-                                <button type="submit" class="btn btn-primary">Create Paste</button>
-                                <button type="button" id="clearBtn" class="btn">Clear</button>
-                            </div>
-                            
-                            <p class="text-xs text-gray-600">Your paste will get a permanent link that anyone can view.</p>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('pasteForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const title = document.getElementById('pasteTitle').value;
-                const content = document.getElementById('pasteContent').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading"></div>';
-                
-                const { data, error } = await supabase
-                    .from('pastes')
-                    .insert([{ title, content, user_id: currentUser.id, views: 0 }])
-                    .select()
-                    .single();
-
-                if (error) {
-                    showToast('Error: ' + error.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Paste';
-                } else {
-                    showToast('Paste created!', 'success');
-                    navigate(`/paste/${data.id}`);
-                }
-            });
-
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                document.getElementById('pasteContent').value = '';
-            });
+        if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+            errorDiv.textContent = 'Username already exists';
+            return;
         }
 
-        // Render Paste
-        async function renderPaste(pasteId) {
-            const { data: paste } = await supabase
-                .from('pastes')
-                .select('*, profiles(username, avatar_url)')
-                .eq('id', pasteId)
-                .single();
+        // Format date as "Feb 27, 2026"
+        const now = new Date();
+        const month = now.toLocaleString('en-US', { month: 'short' });
+        const day = now.getDate();
+        const year = now.getFullYear();
+        const joinedDate = `${month} ${day}, ${year}`;
 
-            if (!paste) {
-                showToast('Paste not found', 'error');
-                navigate('/');
-                return;
-            }
+        const newUser = {
+            username: username,
+            password: password,
+            role: 'User',
+            joined: joinedDate
+        };
 
-            await supabase
-                .from('pastes')
-                .update({ views: (paste.views || 0) + 1 })
-                .eq('id', pasteId);
+        users.push(newUser);
+        saveUsers();
+        
+        successDiv.textContent = 'Account created successfully! You can now login.';
+        
+        // Clear form
+        document.getElementById('signupUsername').value = '';
+        document.getElementById('signupPassword').value = '';
+        document.getElementById('signupConfirmPassword').value = '';
+        
+        // Update users display if on that page
+        if (document.getElementById('page-users').classList.contains('active')) {
+            displayUsers();
+        }
+    }
 
-            const shareUrl = `${window.location.href.split('#')[0]}#/paste/${pasteId}`;
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('kittybin_currentUser');
+        updateUserStatus();
+        showPage('index');
+        displayPastes();
+    }
 
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <div class="flex justify-between items-start">
-                            <h1 class="text-2xl font-bold gradient-text">${paste.title}</h1>
-                            <button class="copy-btn" id="sharePasteBtn">Copy Link</button>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 text-sm text-gray-500 mt-3">
-                            <span>${(paste.views || 0) + 1} views</span>
-                            <span>•</span>
-                            <a href="#/user/${paste.profiles?.username}" class="text-white hover:text-gray-300">${paste.profiles?.username || 'Anonymous'}</a>
-                            <span>•</span>
-                            <span>${new Date(paste.created_at).toLocaleString()}</span>
-                        </div>
-                    </div>
-
-                    <div class="card-body space-y-4">
-                        <div class="share-url flex justify-between items-center">
-                            <span class="truncate mr-3">${shareUrl}</span>
-                            <button class="copy-btn whitespace-nowrap" id="copyUrlBtn">Copy</button>
-                        </div>
-                        
-                        <pre>${paste.content}</pre>
-                        
-                        <div class="flex space-x-2">
-                            <button class="copy-btn" id="copyContentBtn">Copy Content</button>
-                            <a href="#/add" class="copy-btn">Create New</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('sharePasteBtn')?.addEventListener('click', () => copyToClipboard(shareUrl));
-            document.getElementById('copyUrlBtn')?.addEventListener('click', () => copyToClipboard(shareUrl));
-            document.getElementById('copyContentBtn')?.addEventListener('click', () => copyToClipboard(paste.content));
+    // ========== PASTE FUNCTIONS ==========
+    function createPaste() {
+        if (!currentUser) {
+            alert('You must be logged in to create a paste');
+            showPage('login');
+            return;
         }
 
-        // Render Users
-        async function renderUsers() {
-            const { data: users } = await supabase
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
+        const title = document.getElementById('pasteTitle').value.trim();
+        const content = document.getElementById('pasteContent').value.trim();
 
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-xl font-bold gradient-text">Users</h2>
-                        <p class="text-sm text-gray-500 mt-1">${users?.length || 0} users sharing content</p>
-                    </div>
-                    
-                    <div class="p-4 border-b border-custom">
-                        <input type="text" id="userSearch" placeholder="Search users..." class="input w-full md:w-80">
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Pastes</th>
-                                    <th>Joined</th>
-                                    <th>Role</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                ${users?.map(user => `
-                                    <tr>
-                                        <td>
-                                            <a href="#/user/${user.username}" class="text-white hover:text-gray-300 flex items-center space-x-2">
-                                                ${user.avatar_url ? 
-                                                    `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full object-cover">` : 
-                                                    `<div class="w-6 h-6 rounded-full bg-tertiary flex items-center justify-center text-xs">${user.username?.[0]?.toUpperCase()}</div>`
-                                                }
-                                                <span>${user.username}</span>
-                                            </a>
-                                        </td>
-                                        <td>${user.paste_count || 0}</td>
-                                        <td class="text-gray-500">${new Date(user.created_at).toLocaleDateString()}</td>
-                                        <td><span class="badge">${user.role || 'User'}</span></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('userSearch')?.addEventListener('input', (e) => {
-                const search = e.target.value.toLowerCase();
-                const filtered = users?.filter(u => u.username.toLowerCase().includes(search));
-                const tbody = document.getElementById('usersTableBody');
-                tbody.innerHTML = filtered?.map(user => `
-                    <tr>
-                        <td>
-                            <a href="#/user/${user.username}" class="text-white hover:text-gray-300 flex items-center space-x-2">
-                                ${user.avatar_url ? 
-                                    `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full object-cover">` : 
-                                    `<div class="w-6 h-6 rounded-full bg-tertiary flex items-center justify-center text-xs">${user.username?.[0]?.toUpperCase()}</div>`
-                                }
-                                <span>${user.username}</span>
-                            </a>
-                        </td>
-                        <td>${user.paste_count || 0}</td>
-                        <td class="text-gray-500">${new Date(user.created_at).toLocaleDateString()}</td>
-                        <td><span class="badge">${user.role || 'User'}</span></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="4" class="text-center py-8 text-gray-500">No users found</td></tr>';
-            });
+        if (!title || !content) {
+            alert('Title and content are required');
+            return;
         }
 
-        // Render User Profile (FIXED BANNER)
-        async function renderUserProfile(username) {
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('username', username)
-                .single();
-
-            if (!profile) {
-                showToast('User not found', 'error');
-                navigate('/users');
-                return;
-            }
-
-            const { data: pastes } = await supabase
-                .from('pastes')
-                .select('*')
-                .eq('user_id', profile.id)
-                .order('created_at', { ascending: false });
-
-            const isOwnProfile = currentUser?.id === profile.id;
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-6">
-                    <!-- Profile Card with Fixed Banner -->
-                    <div class="card overflow-hidden">
-                        <!-- Banner Section -->
-                        <div class="profile-banner">
-                            ${profile.banner_url ? 
-                                `<img src="${profile.banner_url}" alt="Banner" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)';">` : 
-                                ''
-                            }
-                        </div>
-                        
-                        <!-- Avatar and Info -->
-                        <div class="px-6 pb-6 relative" style="min-height: 100px;">
-                            ${profile.avatar_url ? 
-                                `<img src="${profile.avatar_url}" class="profile-avatar" alt="Avatar" onerror="this.style.display='none'; this.parentElement.innerHTML += '<div class=\'profile-avatar-placeholder\'>${profile.username?.[0]?.toUpperCase()}</div>';">` :
-                                `<div class="profile-avatar-placeholder">${profile.username?.[0]?.toUpperCase()}</div>`
-                            }
-                            
-                            <div class="ml-36 pt-2">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <h1 class="text-2xl font-bold">${profile.username}</h1>
-                                        <p class="text-gray-500 text-sm">Joined ${new Date(profile.created_at).toLocaleDateString()}</p>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        ${profile.role ? `<span class="badge">${profile.role}</span>` : ''}
-                                        ${isOwnProfile ? `
-                                            <button id="editProfileBtn" class="btn btn-sm">Edit Profile</button>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                                
-                                ${profile.bio ? `
-                                    <div class="mt-4 p-4 bg-tertiary rounded-lg border border-custom">
-                                        <p class="text-gray-300">${profile.bio}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                <div class="flex space-x-6 mt-4">
-                                    <div class="stat-card flex-1">
-                                        <div class="stat-value">${profile.paste_count || 0}</div>
-                                        <div class="stat-label">Pastes</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- User's Pastes -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="font-semibold">Pastes by ${profile.username}</h2>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Views</th>
-                                        <th>Date</th>
-                                        <th>Share</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${pastes?.length ? pastes.map(paste => `
-                                        <tr>
-                                            <td>
-                                                <a href="#/paste/${paste.id}" class="text-white hover:text-gray-300">${paste.title}</a>
-                                            </td>
-                                            <td>${paste.views || 0}</td>
-                                            <td class="text-gray-500">${new Date(paste.created_at).toLocaleDateString()}</td>
-                                            <td>
-                                                <button class="copy-btn share-paste-btn" data-url="${window.location.href.split('#')[0]}#/paste/${paste.id}">
-                                                    Copy Link
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('') : `
-                                        <tr>
-                                            <td colspan="4" class="text-center py-8 text-gray-500">No pastes yet</td>
-                                        </tr>
-                                    `}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            if (document.getElementById('editProfileBtn')) {
-                document.getElementById('editProfileBtn').addEventListener('click', () => {
-                    openEditProfileModal(profile);
-                });
-            }
-
-            document.querySelectorAll('.share-paste-btn').forEach(btn => {
-                btn.addEventListener('click', () => copyToClipboard(btn.dataset.url));
-            });
+        if (title.length > 100) {
+            alert('Title must be less than 100 characters');
+            return;
         }
 
-        // Render About
-        function renderAbout() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h1 class="text-2xl font-bold gradient-text">About kittybin.lat</h1>
-                    </div>
-                    
-                    <div class="card-body space-y-6">
-                        <p class="text-gray-300 text-lg">A modern pastebin service for sharing text with everyone.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-tertiary p-5 rounded-lg border border-custom">
-                                <h3 class="font-bold text-lg mb-3">Features</h3>
-                                <ul class="space-y-2 text-gray-400">
-                                    <li class="flex items-center space-x-2"><span class="text-white">→</span> <span>Permanent shareable links</span></li>
-                                    <li class="flex items-center space-x-2"><span class="text-white">→</span> <span>No login required to view</span></li>
-                                    <li class="flex items-center space-x-2"><span class="text-white">→</span> <span>View counts on every paste</span></li>
-                                    <li class="flex items-center space-x-2"><span class="text-white">→</span> <span>Custom user profiles</span></li>
-                                </ul>
-                            </div>
-                            
-                            <div class="bg-tertiary p-5 rounded-lg border border-custom">
-                                <h3 class="font-bold text-lg mb-3">How to Use</h3>
-                                <ol class="space-y-2 text-gray-400 list-decimal list-inside">
-                                    <li>Create an account</li>
-                                    <li>Click "New Paste"</li>
-                                    <li>Enter your content</li>
-                                    <li>Share the link!</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Format date as "Feb 27, 2026"
+        const now = new Date();
+        const month = now.toLocaleString('en-US', { month: 'short' });
+        const day = now.getDate();
+        const year = now.getFullYear();
+        const addedDate = `${month} ${day}, ${year}`;
+
+        const newPaste = {
+            title: title,
+            content: content,
+            views: 0,
+            createdBy: currentUser.username,
+            added: addedDate
+        };
+
+        pastes.push(newPaste);
+        savePastes();
+        
+        clearPasteForm();
+        displayPastes();
+        alert('Paste created successfully!');
+    }
+
+    function clearPasteForm() {
+        document.getElementById('pasteTitle').value = '';
+        document.getElementById('pasteContent').value = '';
+    }
+
+    // ========== PAGE NAVIGATION ==========
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+        
+        document.getElementById(`page-${pageId}`).classList.add('active');
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.getElementById(`nav-${pageId}`).classList.add('active');
+
+        // Refresh data when switching pages
+        if (pageId === 'index') {
+            displayPastes();
+        } else if (pageId === 'users') {
+            displayUsers();
         }
 
-        // Render Login
-        function renderLogin() {
-            if (currentUser) {
-                navigate('/');
-                return;
-            }
+        // Clear search
+        document.getElementById('global-search').value = '';
+    }
 
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-md mx-auto card">
-                    <div class="card-header">
-                        <h2 class="text-xl font-bold gradient-text">Welcome Back</h2>
-                    </div>
-                    
-                    <div class="card-body">
-                        <form id="loginForm" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Email</label>
-                                <input type="email" id="loginEmail" class="input" placeholder="meow@example.com" required>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Password</label>
-                                <input type="password" id="loginPassword" class="input" placeholder="••••••••" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary w-full">Login</button>
-                            
-                            <p class="text-sm text-gray-500 text-center">
-                                Don't have an account? <a href="#/signup" class="text-white hover:text-gray-300">Sign Up</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
-                
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-                if (error) {
-                    showToast('Login failed: ' + error.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Login';
-                } else {
-                    showToast('Login successful!', 'success');
-                    currentSession = data.session;
-                    currentUser = data.user;
-                    await loadUserProfile(data.user.id);
-                    navigate('/');
-                }
-            });
-        }
-
-        // Render Signup
-        function renderSignup() {
-            if (currentUser) {
-                navigate('/');
-                return;
-            }
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-md mx-auto card">
-                    <div class="card-header">
-                        <h2 class="text-xl font-bold gradient-text">Create Account</h2>
-                    </div>
-                    
-                    <div class="card-body">
-                        <form id="signupForm" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Username</label>
-                                <input type="text" id="signupUsername" class="input" placeholder="coolcat123" required minlength="3" maxlength="30">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Email</label>
-                                <input type="email" id="signupEmail" class="input" placeholder="meow@example.com" required>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-400">Password</label>
-                                <input type="password" id="signupPassword" class="input" placeholder="••••••••" required minlength="6">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary w-full">Sign Up</button>
-                            
-                            <p class="text-sm text-gray-500 text-center">
-                                Already have an account? <a href="#/login" class="text-white hover:text-gray-300">Login</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('signupForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('signupUsername').value;
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                const { data: existingUser } = await supabase
-                    .from('profiles')
-                    .select('username')
-                    .eq('username', username)
-                    .single();
-
-                if (existingUser) {
-                    showToast('Username already taken', 'error');
-                    return;
-                }
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
-                
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
-
-                if (authError) {
-                    showToast('Signup failed: ' + authError.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Sign Up';
-                } else if (authData.user) {
-                    await supabase.from('profiles').insert([{ 
-                        id: authData.user.id, 
-                        username,
-                        role: 'User',
-                        paste_count: 0,
-                        comment_count: 0
-                    }]);
-                    
-                    showToast('Signup successful! Please check your email.', 'success');
-                    navigate('/login');
-                }
-            });
-        }
-
-        // Initialize
-        initAuth();
-    </script>
+    // ========== INITIALIZATION ==========
+    window.onload = function() {
+        // Clear everything on load to ensure no cached data
+        users = [];
+        pastes = [];
+        currentUser = null;
+        localStorage.removeItem('kittybin_users');
+        localStorage.removeItem('kittybin_pastes');
+        localStorage.removeItem('kittybin_currentUser');
+        saveUsers();
+        savePastes();
+        
+        updateUserStatus();
+        displayPastes();
+        displayUsers();
+        showPage('index');
+    };
+</script>
 </body>
 </html>
