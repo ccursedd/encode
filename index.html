@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -80,7 +81,29 @@
         .user-status {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+        }
+
+        .user-profile-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px 15px;
+            border: 1px solid #333;
+            border-radius: 30px;
+        }
+
+        .user-profile-mini:hover {
+            background: #1a1a1a;
+        }
+
+        .mini-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #444;
         }
 
         .username-display {
@@ -198,7 +221,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #333333;
@@ -213,7 +237,8 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #666666;
         }
@@ -254,7 +279,7 @@
         }
 
         .auth-box {
-            width: 450px;
+            width: 500px;
             border: 2px solid #333333;
             background: #0a0a0a;
         }
@@ -335,6 +360,109 @@
             color: #666;
             border: 2px dashed #333;
         }
+
+        .profile-header {
+            position: relative;
+            margin-bottom: 30px;
+            border: 2px solid #333;
+        }
+
+        .profile-banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #1a1a1a;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .profile-banner:hover {
+            opacity: 0.8;
+        }
+
+        .profile-avatar-container {
+            position: relative;
+            margin-top: -75px;
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #000;
+            object-fit: cover;
+            background: #1a1a1a;
+            cursor: pointer;
+        }
+
+        .profile-avatar:hover {
+            opacity: 0.8;
+        }
+
+        .profile-info {
+            padding: 20px 30px;
+        }
+
+        .profile-username {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .profile-bio {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 30px;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-hint {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading i {
+            margin-right: 10px;
+        }
+
+        .user-with-avatar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -345,12 +473,16 @@
             <div class="nav-links">
                 <a onclick="showPage('index')" id="nav-index" class="active">Add Paste</a>
                 <a onclick="showPage('users')" id="nav-users">Users</a>
+                <a onclick="showPage('profile')" id="nav-profile" style="display: none;">Profile</a>
                 <a onclick="showPage('login')" id="nav-login">Login</a>
                 <a onclick="showPage('signup')" id="nav-signup">Sign Up</a>
             </div>
         </div>
         <div class="user-status" id="userStatus" style="display: none;">
-            <span class="username-display" id="currentUsername"></span>
+            <div class="user-profile-mini" onclick="showPage('profile')">
+                <img id="miniAvatar" src="https://via.placeholder.com/30" alt="avatar" class="mini-avatar">
+                <span class="username-display" id="currentUsername"></span>
+            </div>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -366,7 +498,7 @@
             <span id="pasteCount">0 total pastes</span>
         </div>
         
-        <div class="create-paste">
+        <div class="create-paste" id="createPasteSection" style="display: none;">
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" id="pasteTitle" placeholder="Enter paste title" maxlength="100">
@@ -379,6 +511,9 @@
                 <button class="create-btn" onclick="createPaste()"><i class="fas fa-save"></i> Save Paste</button>
                 <button class="cancel-btn" onclick="clearPasteForm()">Clear</button>
             </div>
+        </div>
+        <div id="loginPrompt" style="text-align: center; padding: 30px; border: 2px solid #333; margin-bottom: 30px; display: none;">
+            <p>Please <a onclick="showPage('login')" style="color: #00ff00; cursor: pointer;">login</a> to create pastes</p>
         </div>
 
         <div class="section-header">Recent Pastes</div>
@@ -394,7 +529,7 @@
                 </thead>
                 <tbody id="pastesTableBody">
                     <tr>
-                        <td colspan="4" class="no-data">No pastes yet. Be the first to create one!</td>
+                        <td colspan="4" class="no-data"><i class="fas fa-spinner fa-spin"></i> Loading pastes...</td>
                     </tr>
                 </tbody>
             </table>
@@ -411,7 +546,7 @@
             <table class="user-table" id="usersTable">
                 <thead>
                     <tr>
-                        <th>Username</th>
+                        <th>User</th>
                         <th>Role</th>
                         <th>Pastes</th>
                         <th>Joined</th>
@@ -419,7 +554,56 @@
                 </thead>
                 <tbody id="usersTableBody">
                     <tr>
-                        <td colspan="4" class="no-data">No users registered yet. Sign up to be the first!</td>
+                        <td colspan="4" class="no-data"><i class="fas fa-spinner fa-spin"></i> Loading users...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div id="page-profile" class="page">
+        <div class="profile-header">
+            <img id="profileBanner" src="https://via.placeholder.com/1200x200/1a1a1a/666?text=Click+to+upload+banner" alt="banner" class="profile-banner" onclick="document.getElementById('bannerInput').click()">
+            <input type="file" id="bannerInput" class="file-input" accept="image/*" onchange="uploadBanner(event)">
+            <div class="upload-hint" style="text-align: center; margin-top: 5px;">Click banner to upload</div>
+            
+            <div class="profile-avatar-container">
+                <img id="profileAvatar" src="https://via.placeholder.com/150" alt="avatar" class="profile-avatar" onclick="document.getElementById('avatarInput').click()">
+                <input type="file" id="avatarInput" class="file-input" accept="image/*" onchange="uploadAvatar(event)">
+                <div class="upload-hint">Click avatar to upload</div>
+            </div>
+            
+            <div class="profile-info">
+                <div class="profile-username" id="profileUsername"></div>
+                <div class="profile-role" id="profileRole"></div>
+                
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="bioInput" placeholder="Tell us about yourself..." rows="3"></textarea>
+                    <button class="create-btn" style="margin-top: 10px;" onclick="updateBio()">Update Bio</button>
+                </div>
+                
+                <div class="profile-meta">
+                    <span><i class="fas fa-calendar"></i> Joined: <span id="profileJoined"></span></span>
+                    <span><i class="fas fa-paste"></i> Pastes: <span id="profilePasteCount">0</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">My Pastes</div>
+        <div class="section-card">
+            <table class="paste-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Added</th>
+                    </tr>
+                </thead>
+                <tbody id="profilePastesBody">
+                    <tr>
+                        <td colspan="3" class="no-data">No pastes yet</td>
                     </tr>
                 </tbody>
             </table>
@@ -433,7 +617,7 @@
                 <div class="auth-header">Login</div>
                 <div class="auth-form">
                     <div class="form-group">
-                        <label>Username</label>
+                        <label>Username or Email</label>
                         <input type="text" id="loginUsername" class="auth-input">
                     </div>
                     <div class="form-group">
@@ -461,6 +645,10 @@
                         <input type="text" id="signupUsername" class="auth-input">
                     </div>
                     <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" class="auth-input">
+                    </div>
+                    <div class="form-group">
                         <label>Password</label>
                         <input type="password" id="signupPassword" class="auth-input">
                     </div>
@@ -481,176 +669,106 @@
 </div>
 
 <script>
-    // ========== RESET EVERYTHING - START FRESH ==========
-    // Clear any existing data to ensure no default pastes show up
-    localStorage.removeItem('kittybin_users');
-    localStorage.removeItem('kittybin_pastes');
-    localStorage.removeItem('kittybin_currentUser');
+    // ========== SUPABASE CONFIGURATION ==========
+    const supabaseUrl = 'https://ylgtgecqhdhakzbjdkqq.supabase.co';
+    const supabaseAnonKey = 'sb_publishable_ILF6pER_bdL8GppxOzfumg_xsDoMA6T';
     
-    // Start with COMPLETELY EMPTY arrays
-    let users = [];
-    let pastes = [];
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+    // ========== GLOBAL VARIABLES ==========
     let currentUser = null;
 
-    // ========== STORAGE FUNCTIONS ==========
-    function saveUsers() {
-        localStorage.setItem('kittybin_users', JSON.stringify(users));
-    }
-
-    function savePastes() {
-        localStorage.setItem('kittybin_pastes', JSON.stringify(pastes));
-    }
-
-    // Save initial empty state
-    saveUsers();
-    savePastes();
-
-    // ========== UI UPDATE FUNCTIONS ==========
-    function updateUserStatus() {
-        const userStatus = document.getElementById('userStatus');
-        const currentUsername = document.getElementById('currentUsername');
-        
-        if (currentUser) {
-            userStatus.style.display = 'flex';
-            currentUsername.textContent = currentUser.username;
-            document.getElementById('nav-login').style.display = 'none';
-            document.getElementById('nav-signup').style.display = 'none';
-        } else {
-            userStatus.style.display = 'none';
-            document.getElementById('nav-login').style.display = 'inline';
-            document.getElementById('nav-signup').style.display = 'inline';
-        }
-    }
-
-    function displayPastes() {
-        const tbody = document.getElementById('pastesTableBody');
-        const pasteCount = document.getElementById('pasteCount');
-        
-        if (!pastes || pastes.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No pastes yet. Be the first to create one!</td></tr>';
-            pasteCount.textContent = '0 total pastes';
-            return;
-        }
-
-        // Only show pastes from users that still exist in the users array
-        const validPastes = pastes.filter(paste => {
-            return users.some(user => user.username === paste.createdBy);
-        });
-
-        if (validPastes.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No pastes from existing users</td></tr>';
-            pasteCount.textContent = '0 total pastes';
-            return;
-        }
-
-        // Sort pastes by date (newest first)
-        const sortedPastes = [...validPastes].sort((a, b) => {
-            return new Date(b.added) - new Date(a.added);
-        });
-
-        tbody.innerHTML = '';
-        sortedPastes.forEach(paste => {
-            // Find the user to get their current role
-            const user = users.find(u => u.username === paste.createdBy);
-            const role = user ? user.role : 'User';
+    // ========== CHECK SESSION ON LOAD ==========
+    async function checkSession() {
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
             
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${escapeHtml(paste.title)}</td>
-                <td><span class="views">${paste.views || 0}</span></td>
-                <td>${escapeHtml(paste.createdBy)} ${role !== 'User' ? `<span class="user-badge">[${escapeHtml(role)}]</span>` : ''}</td>
-                <td>${escapeHtml(paste.added)}</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        pasteCount.textContent = `${validPastes.length} total pastes`;
-    }
-
-    function displayUsers() {
-        const tbody = document.getElementById('usersTableBody');
-        
-        if (!users || users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No users registered yet. Sign up to be the first!</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = '';
-
-        // Sort users by join date (newest first)
-        const sortedUsers = [...users].sort((a, b) => {
-            return new Date(b.joined) - new Date(a.joined);
-        });
-
-        sortedUsers.forEach(user => {
-            // Count only pastes that exist and belong to this user
-            const userPastes = pastes.filter(p => p.createdBy === user.username).length;
+            if (error) throw error;
             
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${escapeHtml(user.username)}</td>
-                <td>${user.role && user.role !== 'User' ? `<span class="user-badge">[${escapeHtml(user.role)}]</span>` : ''}</td>
-                <td>${userPastes}</td>
-                <td>${escapeHtml(user.joined)}</td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function filterPastes() {
-        const searchTerm = document.getElementById('global-search').value.toLowerCase();
-        const rows = document.querySelectorAll('#pastesTableBody tr');
-        
-        rows.forEach(row => {
-            if (row.classList.contains('no-data')) return;
-            const text = row.textContent.toLowerCase();
-            if (text.includes(searchTerm) || searchTerm === '') {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+            if (session) {
+                // Get user data from users table
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                    
+                if (userError) throw userError;
+                
+                currentUser = userData;
+                updateUserStatus();
+                await loadUserData();
+                showPage('index');
             }
-        });
-    }
-
-    function escapeHtml(unsafe) {
-        if (!unsafe) return '';
-        return String(unsafe)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        } catch (error) {
+            console.error('Session check failed:', error);
+            await supabase.auth.signOut();
+        }
     }
 
     // ========== AUTH FUNCTIONS ==========
-    function login() {
+    async function login() {
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
         const errorDiv = document.getElementById('loginError');
 
+        errorDiv.textContent = '';
+
         if (!username || !password) {
-            errorDiv.textContent = 'Username and password are required';
+            errorDiv.textContent = 'Username/email and password are required';
             return;
         }
 
-        const user = users.find(u => u.username === username && u.password === password);
-        
-        if (user) {
-            currentUser = { username: user.username, role: user.role };
-            localStorage.setItem('kittybin_currentUser', JSON.stringify(currentUser));
+        try {
+            let email = username;
+            // If username doesn't contain @, try to find user by username first
+            if (!username.includes('@')) {
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('email')
+                    .eq('username', username)
+                    .single();
+                    
+                if (userError) {
+                    errorDiv.textContent = 'Invalid username or password';
+                    return;
+                }
+                email = userData.email;
+            }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) throw error;
+
+            // Get user data
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', data.user.id)
+                .single();
+
+            if (userError) throw userError;
+
+            currentUser = userData;
             errorDiv.textContent = '';
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
-            showPage('index');
+            
+            await loadUserData();
             updateUserStatus();
-            displayPastes();
-        } else {
+            showPage('index');
+        } catch (error) {
+            console.error('Login error:', error);
             errorDiv.textContent = 'Invalid username or password';
         }
     }
 
-    function signup() {
+    async function signup() {
         const username = document.getElementById('signupUsername').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
         const password = document.getElementById('signupPassword').value;
         const confirmPassword = document.getElementById('signupConfirmPassword').value;
         const errorDiv = document.getElementById('signupError');
@@ -659,13 +777,18 @@
         errorDiv.textContent = '';
         successDiv.textContent = '';
 
-        if (!username || !password) {
-            errorDiv.textContent = 'Username and password are required';
+        if (!username || !email || !password) {
+            errorDiv.textContent = 'All fields are required';
             return;
         }
 
-        if (password.length < 3) {
-            errorDiv.textContent = 'Password must be at least 3 characters';
+        if (!email.includes('@')) {
+            errorDiv.textContent = 'Invalid email address';
+            return;
+        }
+
+        if (password.length < 6) {
+            errorDiv.textContent = 'Password must be at least 6 characters';
             return;
         }
 
@@ -674,51 +797,209 @@
             return;
         }
 
-        if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
-            errorDiv.textContent = 'Username already exists';
-            return;
-        }
+        try {
+            // Check if username exists
+            const { data: existingUser, error: checkError } = await supabase
+                .from('users')
+                .select('username')
+                .eq('username', username)
+                .single();
 
-        // Format date as "Feb 27, 2026"
-        const now = new Date();
-        const month = now.toLocaleString('en-US', { month: 'short' });
-        const day = now.getDate();
-        const year = now.getFullYear();
-        const joinedDate = `${month} ${day}, ${year}`;
+            if (existingUser) {
+                errorDiv.textContent = 'Username already exists';
+                return;
+            }
 
-        const newUser = {
-            username: username,
-            password: password,
-            role: 'User',
-            joined: joinedDate
-        };
+            // Create auth user
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: email,
+                password: password
+            });
 
-        users.push(newUser);
-        saveUsers();
-        
-        successDiv.textContent = 'Account created successfully! You can now login.';
-        
-        // Clear form
-        document.getElementById('signupUsername').value = '';
-        document.getElementById('signupPassword').value = '';
-        document.getElementById('signupConfirmPassword').value = '';
-        
-        // Update users display if on that page
-        if (document.getElementById('page-users').classList.contains('active')) {
-            displayUsers();
+            if (authError) throw authError;
+
+            // Create user profile
+            const { error: profileError } = await supabase
+                .from('users')
+                .insert({
+                    id: authData.user.id,
+                    username: username,
+                    email: email,
+                    role: 'User',
+                    created_at: new Date().toISOString()
+                });
+
+            if (profileError) throw profileError;
+
+            successDiv.textContent = 'Account created successfully! You can now login.';
+            
+            // Clear form
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupConfirmPassword').value = '';
+        } catch (error) {
+            console.error('Signup error:', error);
+            errorDiv.textContent = error.message || 'Signup failed. Please try again.';
         }
     }
 
-    function logout() {
+    async function logout() {
+        await supabase.auth.signOut();
         currentUser = null;
-        localStorage.removeItem('kittybin_currentUser');
         updateUserStatus();
         showPage('index');
-        displayPastes();
+        await loadPastes();
+    }
+
+    // ========== PROFILE FUNCTIONS ==========
+    async function uploadAvatar(event) {
+        if (!currentUser) return;
+        
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${currentUser.id}/avatar.${fileExt}`;
+            
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(fileName, file, { upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(fileName);
+
+            // Update user profile
+            const { error: updateError } = await supabase
+                .from('users')
+                .update({ avatar_url: publicUrl })
+                .eq('id', currentUser.id);
+
+            if (updateError) throw updateError;
+
+            currentUser.avatar_url = publicUrl;
+            document.getElementById('profileAvatar').src = publicUrl;
+            document.getElementById('miniAvatar').src = publicUrl;
+            
+            await loadUsers(); // Refresh users list
+        } catch (error) {
+            console.error('Avatar upload failed:', error);
+            alert('Failed to upload avatar');
+        }
+    }
+
+    async function uploadBanner(event) {
+        if (!currentUser) return;
+        
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${currentUser.id}/banner.${fileExt}`;
+            
+            const { error: uploadError } = await supabase.storage
+                .from('banners')
+                .upload(fileName, file, { upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('banners')
+                .getPublicUrl(fileName);
+
+            // Update user profile
+            const { error: updateError } = await supabase
+                .from('users')
+                .update({ banner_url: publicUrl })
+                .eq('id', currentUser.id);
+
+            if (updateError) throw updateError;
+
+            currentUser.banner_url = publicUrl;
+            document.getElementById('profileBanner').src = publicUrl;
+        } catch (error) {
+            console.error('Banner upload failed:', error);
+            alert('Failed to upload banner');
+        }
+    }
+
+    async function updateBio() {
+        if (!currentUser) return;
+
+        const bio = document.getElementById('bioInput').value;
+        
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ bio: bio })
+                .eq('id', currentUser.id);
+
+            if (error) throw error;
+
+            currentUser.bio = bio;
+            document.getElementById('profileBio').textContent = bio || 'No bio yet';
+            alert('Bio updated successfully!');
+        } catch (error) {
+            console.error('Bio update failed:', error);
+            alert('Failed to update bio');
+        }
     }
 
     // ========== PASTE FUNCTIONS ==========
-    function createPaste() {
+    async function loadPastes() {
+        const tbody = document.getElementById('pastesTableBody');
+        const pasteCount = document.getElementById('pasteCount');
+
+        try {
+            const { data: pastes, error } = await supabase
+                .from('pastes')
+                .select('*, users(username, role, avatar_url)')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (!pastes || pastes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">No pastes yet. Be the first to create one!</td></tr>';
+                pasteCount.textContent = '0 total pastes';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            pastes.forEach(paste => {
+                const row = document.createElement('tr');
+                const date = new Date(paste.created_at).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                
+                row.innerHTML = `
+                    <td>${escapeHtml(paste.title)}</td>
+                    <td><span class="views">${paste.views || 0}</span></td>
+                    <td>
+                        <div class="user-with-avatar">
+                            ${paste.users?.avatar_url ? `<img src="${paste.users.avatar_url}" class="table-avatar">` : ''}
+                            ${escapeHtml(paste.username)} ${paste.users?.role !== 'User' ? `<span class="user-badge">[${escapeHtml(paste.users?.role)}]</span>` : ''}
+                        </div>
+                    </td>
+                    <td>${date}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            pasteCount.textContent = `${pastes.length} total pastes`;
+        } catch (error) {
+            console.error('Failed to load pastes:', error);
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">Failed to load pastes</td></tr>';
+        }
+    }
+
+    async function createPaste() {
         if (!currentUser) {
             alert('You must be logged in to create a paste');
             showPage('login');
@@ -733,32 +1014,189 @@
             return;
         }
 
-        if (title.length > 100) {
-            alert('Title must be less than 100 characters');
-            return;
+        try {
+            const { error } = await supabase
+                .from('pastes')
+                .insert({
+                    title: title,
+                    content: content,
+                    user_id: currentUser.id,
+                    username: currentUser.username,
+                    user_role: currentUser.role,
+                    created_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+
+            clearPasteForm();
+            await loadPastes();
+            await loadUserData();
+            alert('Paste created successfully!');
+        } catch (error) {
+            console.error('Failed to create paste:', error);
+            alert('Failed to create paste');
         }
+    }
 
-        // Format date as "Feb 27, 2026"
-        const now = new Date();
-        const month = now.toLocaleString('en-US', { month: 'short' });
-        const day = now.getDate();
-        const year = now.getFullYear();
-        const addedDate = `${month} ${day}, ${year}`;
+    // ========== USER FUNCTIONS ==========
+    async function loadUsers() {
+        const tbody = document.getElementById('usersTableBody');
 
-        const newPaste = {
-            title: title,
-            content: content,
-            views: 0,
-            createdBy: currentUser.username,
-            added: addedDate
-        };
+        try {
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-        pastes.push(newPaste);
-        savePastes();
+            if (error) throw error;
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">No users registered yet</td></tr>';
+                return;
+            }
+
+            // Get paste counts
+            const { data: pastes, error: pasteError } = await supabase
+                .from('pastes')
+                .select('user_id');
+
+            if (pasteError) throw pasteError;
+
+            const pasteCounts = {};
+            pastes.forEach(p => {
+                pasteCounts[p.user_id] = (pasteCounts[p.user_id] || 0) + 1;
+            });
+
+            tbody.innerHTML = '';
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                const date = new Date(user.created_at).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="user-with-avatar">
+                            <img src="${user.avatar_url || 'https://via.placeholder.com/25'}" 
+                                 class="table-avatar">
+                            ${escapeHtml(user.username)}
+                        </div>
+                    </td>
+                    <td>${user.role !== 'User' ? `<span class="user-badge">[${escapeHtml(user.role)}]</span>` : ''}</td>
+                    <td>${pasteCounts[user.id] || 0}</td>
+                    <td>${date}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Failed to load users:', error);
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">Failed to load users</td></tr>';
+        }
+    }
+
+    async function loadUserData() {
+        if (!currentUser) return;
+
+        try {
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            document.getElementById('profileRole').textContent = currentUser.role || 'User';
+            document.getElementById('profileBio').textContent = currentUser.bio || 'No bio yet';
+            document.getElementById('bioInput').value = currentUser.bio || '';
+            
+            const date = new Date(currentUser.created_at).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            document.getElementById('profileJoined').textContent = date;
+
+            if (currentUser.avatar_url) {
+                document.getElementById('profileAvatar').src = currentUser.avatar_url;
+                document.getElementById('miniAvatar').src = currentUser.avatar_url;
+            }
+            
+            if (currentUser.banner_url) {
+                document.getElementById('profileBanner').src = currentUser.banner_url;
+            }
+
+            const { data: pastes, error } = await supabase
+                .from('pastes')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            const profilePastesBody = document.getElementById('profilePastesBody');
+            document.getElementById('profilePasteCount').textContent = pastes?.length || 0;
+
+            if (!pastes || pastes.length === 0) {
+                profilePastesBody.innerHTML = '<tr><td colspan="3" class="no-data">No pastes yet</td></tr>';
+            } else {
+                profilePastesBody.innerHTML = '';
+                pastes.forEach(paste => {
+                    const row = document.createElement('tr');
+                    const pasteDate = new Date(paste.created_at).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                    });
+                    
+                    row.innerHTML = `
+                        <td>${escapeHtml(paste.title)}</td>
+                        <td><span class="views">${paste.views || 0}</span></td>
+                        <td>${pasteDate}</td>
+                    `;
+                    profilePastesBody.appendChild(row);
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load user data:', error);
+        }
+    }
+
+    // ========== UI FUNCTIONS ==========
+    function updateUserStatus() {
+        const userStatus = document.getElementById('userStatus');
+        const navProfile = document.getElementById('nav-profile');
+        const navLogin = document.getElementById('nav-login');
+        const navSignup = document.getElementById('nav-signup');
+        const createPasteSection = document.getElementById('createPasteSection');
+        const loginPrompt = document.getElementById('loginPrompt');
         
-        clearPasteForm();
-        displayPastes();
-        alert('Paste created successfully!');
+        if (currentUser) {
+            userStatus.style.display = 'flex';
+            navProfile.style.display = 'inline';
+            navLogin.style.display = 'none';
+            navSignup.style.display = 'none';
+            createPasteSection.style.display = 'block';
+            loginPrompt.style.display = 'none';
+            
+            document.getElementById('currentUsername').textContent = currentUser.username;
+            if (currentUser.avatar_url) {
+                document.getElementById('miniAvatar').src = currentUser.avatar_url;
+            }
+        } else {
+            userStatus.style.display = 'none';
+            navProfile.style.display = 'none';
+            navLogin.style.display = 'inline';
+            navSignup.style.display = 'inline';
+            createPasteSection.style.display = 'none';
+            loginPrompt.style.display = 'block';
+        }
+    }
+
+    function filterPastes() {
+        const searchTerm = document.getElementById('global-search').value.toLowerCase();
+        const rows = document.querySelectorAll('#pastesTableBody tr');
+        
+        rows.forEach(row => {
+            if (row.classList.contains('no-data')) return;
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) || searchTerm === '' ? '' : 'none';
+        });
     }
 
     function clearPasteForm() {
@@ -766,8 +1204,18 @@
         document.getElementById('pasteContent').value = '';
     }
 
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     // ========== PAGE NAVIGATION ==========
-    function showPage(pageId) {
+    async function showPage(pageId) {
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
         });
@@ -779,32 +1227,25 @@
         });
         document.getElementById(`nav-${pageId}`).classList.add('active');
 
-        // Refresh data when switching pages
         if (pageId === 'index') {
-            displayPastes();
+            await loadPastes();
         } else if (pageId === 'users') {
-            displayUsers();
+            await loadUsers();
+        } else if (pageId === 'profile' && currentUser) {
+            await loadUserData();
+        } else if (pageId === 'profile' && !currentUser) {
+            showPage('login');
+            return;
         }
 
-        // Clear search
         document.getElementById('global-search').value = '';
     }
 
     // ========== INITIALIZATION ==========
-    window.onload = function() {
-        // Clear everything on load to ensure no cached data
-        users = [];
-        pastes = [];
-        currentUser = null;
-        localStorage.removeItem('kittybin_users');
-        localStorage.removeItem('kittybin_pastes');
-        localStorage.removeItem('kittybin_currentUser');
-        saveUsers();
-        savePastes();
-        
-        updateUserStatus();
-        displayPastes();
-        displayUsers();
+    window.onload = async function() {
+        await checkSession();
+        await loadPastes();
+        await loadUsers();
         showPage('index');
     };
 </script>
