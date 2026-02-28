@@ -1,1069 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kittybin.lat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #000000;
-            color: #ffffff;
-        }
-        .bg-primary { background-color: #000000; }
-        .bg-secondary { background-color: #111111; }
-        .bg-tertiary { background-color: #1a1a1a; }
-        .border-custom { border-color: #333333; }
-        .btn { 
-            background-color: #333333; 
-            color: white; 
-            padding: 0.5rem 1rem; 
-            border-radius: 0.375rem; 
-            border: 1px solid #444444;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .btn:hover { background-color: #444444; }
-        .btn-primary {
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #ffffff;
-        }
-        .btn-primary:hover {
-            background-color: #cccccc;
-            border-color: #cccccc;
-        }
-        .input { 
-            background-color: #1a1a1a; 
-            border: 1px solid #333333; 
-            color: white; 
-            padding: 0.5rem 1rem; 
-            border-radius: 0.375rem; 
-            width: 100%;
-        }
-        .input:focus { outline: none; border-color: #666666; }
-        .badge { 
-            padding: 0.25rem 0.75rem; 
-            border-radius: 9999px; 
-            font-size: 0.75rem; 
-            border: 1px solid #333333;
-        }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #1a1a1a;
-            border: 1px solid #333333;
-            color: white;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            max-width: 300px;
-        }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #333333;
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .copy-btn {
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border: 1px solid #333333;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-        }
-        .copy-btn:hover {
-            background-color: #333333;
-        }
-        .share-url {
-            background-color: #1a1a1a;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            border: 1px solid #333333;
-            font-family: monospace;
-            word-break: break-all;
-        }
-        .avatar-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 2px solid #333333;
-            object-fit: cover;
-        }
-        .banner-preview {
-            width: 100%;
-            height: 200px;
-            border: 2px solid #333333;
-            object-fit: cover;
-            border-radius: 0.375rem;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: #111111;
-            border: 1px solid #333333;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>kittybin.lat</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+      colors: { accent: '#8b5cf6' }
+    }
+  }
+}
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+  background: radial-gradient(circle at top, #111827 0%, #000000 65%);
+}
+
+.glass {
+  background: rgba(17,24,39,.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.card { border-radius: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+
+.btn { padding:.6rem 1.2rem; border-radius:.75rem; font-weight:500; transition:.2s; }
+.btn-primary { background:#8b5cf6; color:white; }
+.btn-primary:hover{filter:brightness(110%);}
+.btn-secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
+.btn-secondary:hover{background:rgba(255,255,255,.1);}
+
+.input {
+  width:100%;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:.75rem;
+  padding:.6rem 1rem;
+}
+.input:focus{
+  outline:none;
+  border-color:#8b5cf6;
+  box-shadow:0 0 0 2px rgba(139,92,246,.3);
+}
+
+.table-row{
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.table-row:hover{background:rgba(255,255,255,.05);}
+
+.toast{
+  background:rgba(17,24,39,.9);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.75rem 1rem;
+  border-radius:.75rem;
+  font-size:.875rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+</style>
 </head>
-<body class="bg-primary text-white">
-    <nav class="border-b border-custom bg-secondary">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="#/" class="text-2xl font-bold text-white flex items-center" id="home-link">
-                        <span>kittybin.lat</span>
-                    </a>
-                    <div class="hidden md:flex space-x-1">
-                        <a href="#/" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Home</a>
-                        <a href="#/add" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Add Paste</a>
-                        <a href="#/users" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">Users</a>
-                        <a href="#/about" class="nav-link text-gray-300 hover:bg-tertiary hover:text-white px-3 py-2 rounded-md">About</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div id="authButtons"></div>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="app">
-            <div class="flex justify-center items-center h-64">
-                <div class="loading"></div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="border-t border-custom bg-secondary mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="text-center text-sm text-gray-500">
-                <p>© 2026 kittybin.lat - Share text with everyone, forever</p>
-                <p class="mt-2">Every paste gets its own permanent link</p>
-            </div>
-        </div>
-    </footer>
-
-    <div id="toastContainer"></div>
-    <div id="modalContainer"></div>
-
-    <script type="module">
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-        // Initialize Supabase
-        const supabase = createClient(
-            'https://ylgtgecqhdhakzbjdkqq.supabase.co',
-            'sb_publishable_ILF6pER_bdL8GppxOzfumg_xsDoMA6T'
-        );
-
-        // State
-        let currentUser = null;
-        let currentSession = null;
-
-        // Toast notification function
-        function showToast(message, type = 'info', duration = 3000) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            const prefix = type === 'success' ? '✓' : type === 'error' ? '✗' : '●';
-            toast.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <span>${prefix}</span>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.getElementById('toastContainer').appendChild(toast);
-            setTimeout(() => {
-                toast.remove();
-            }, duration);
-        }
-
-        // Copy to clipboard function
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('Copied to clipboard!', 'success');
-            } catch (err) {
-                showToast('Failed to copy', 'error');
-            }
-        }
-
-        // Get current hash path
-        function getHashPath() {
-            const hash = window.location.hash.slice(1) || '/';
-            return hash;
-        }
-
-        // Check for existing session
-        async function initAuth() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (session) {
-                currentSession = session;
-                currentUser = session.user;
-                await loadUserProfile(session.user.id);
-            }
-            updateAuthButtons();
-            handleRoute();
-        }
-
-        // Load user profile
-        async function loadUserProfile(userId) {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
-            
-            if (data) {
-                currentUser = { ...currentUser, ...data };
-            } else if (error && error.code === 'PGRST116') {
-                // Profile doesn't exist, create it
-                const username = currentUser.email?.split('@')[0] || 'user_' + Math.random().toString(36).substring(7);
-                const { data: newProfile, error: createError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        { 
-                            id: userId, 
-                            username: username,
-                            role: 'User',
-                            paste_count: 0
-                        }
-                    ])
-                    .select()
-                    .single();
-                
-                if (newProfile) {
-                    currentUser = { ...currentUser, ...newProfile };
-                }
-            }
-            updateAuthButtons();
-        }
-
-        // Update auth buttons
-        function updateAuthButtons() {
-            const authDiv = document.getElementById('authButtons');
-            if (currentUser) {
-                authDiv.innerHTML = `
-                    <a href="#/user/${currentUser.username}" class="flex items-center space-x-2">
-                        ${currentUser.avatar_url ? 
-                            `<img src="${currentUser.avatar_url}" class="w-8 h-8 rounded-full border border-custom">` : 
-                            `<div class="w-8 h-8 rounded-full bg-tertiary border border-custom flex items-center justify-center font-bold">${currentUser.username?.[0]?.toUpperCase()}</div>`
-                        }
-                    </a>
-                    <button id="logoutBtn" class="btn">Logout</button>
-                `;
-                document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-                    await supabase.auth.signOut();
-                    currentUser = null;
-                    currentSession = null;
-                    updateAuthButtons();
-                    window.location.hash = '#/';
-                    showToast('Logged out successfully', 'success');
-                });
-            } else {
-                authDiv.innerHTML = `
-                    <a href="#/login" class="btn">Login</a>
-                    <a href="#/signup" class="btn btn-primary">Sign Up</a>
-                `;
-            }
-        }
-
-        // Router
-        window.addEventListener('hashchange', () => handleRoute());
-
-        function navigate(path) {
-            window.location.hash = `#${path}`;
-        }
-
-        // Handle navigation clicks
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[href^="#"]');
-            if (link) {
-                e.preventDefault();
-                const hash = link.getAttribute('href');
-                window.location.hash = hash;
-            }
-        });
-
-        // Main router function
-        async function handleRoute() {
-            const path = getHashPath();
-            const app = document.getElementById('app');
-            
-            // Show loading
-            app.innerHTML = `
-                <div class="flex justify-center items-center h-64">
-                    <div class="loading"></div>
-                </div>
-            `;
-            
-            try {
-                if (path === '/') await renderHome();
-                else if (path === '/add') await renderAddPaste();
-                else if (path === '/users') await renderUsers();
-                else if (path === '/about') renderAbout();
-                else if (path === '/login') renderLogin();
-                else if (path === '/signup') renderSignup();
-                else if (path.startsWith('/paste/')) {
-                    const pasteId = path.split('/')[2];
-                    await renderPaste(pasteId);
-                }
-                else if (path.startsWith('/user/')) {
-                    const username = path.split('/')[2];
-                    await renderUserProfile(username);
-                }
-                else {
-                    window.location.hash = '#/';
-                }
-            } catch (error) {
-                console.error('Route error:', error);
-                app.innerHTML = `
-                    <div class="bg-secondary rounded-lg border border-custom p-6 text-center">
-                        <p class="text-red-400">Error loading page: ${error.message}</p>
-                        <a href="#/" class="btn mt-4 inline-block">Go Home</a>
-                    </div>
-                `;
-            }
-        }
-
-        // Profile editing modal
-        function openEditProfileModal(profile) {
-            const modalContainer = document.getElementById('modalContainer');
-            modalContainer.innerHTML = `
-                <div class="modal" id="editProfileModal">
-                    <div class="modal-content">
-                        <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
-                        
-                        <form id="editProfileForm" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Username</label>
-                                <input type="text" id="editUsername" class="input" value="${profile.username}" required minlength="3" maxlength="30">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Bio</label>
-                                <textarea id="editBio" class="input" rows="3" maxlength="500">${profile.bio || ''}</textarea>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Avatar URL</label>
-                                <input type="url" id="editAvatarUrl" class="input" value="${profile.avatar_url || ''}" placeholder="https://example.com/avatar.jpg">
-                                ${profile.avatar_url ? `<img src="${profile.avatar_url}" class="avatar-preview mt-2">` : ''}
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Banner URL</label>
-                                <input type="url" id="editBannerUrl" class="input" value="${profile.banner_url || ''}" placeholder="https://example.com/banner.jpg">
-                                ${profile.banner_url ? `<img src="${profile.banner_url}" class="banner-preview mt-2">` : ''}
-                            </div>
-                            
-                            <div class="flex space-x-2 pt-4">
-                                <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
-                                <button type="button" id="cancelEditBtn" class="btn flex-1">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('editUsername').value;
-                const bio = document.getElementById('editBio').value;
-                const avatar_url = document.getElementById('editAvatarUrl').value;
-                const banner_url = document.getElementById('editBannerUrl').value;
-
-                // Check if username is taken
-                if (username !== profile.username) {
-                    const { data: existingUser } = await supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('username', username)
-                        .single();
-
-                    if (existingUser) {
-                        showToast('Username already taken', 'error');
-                        return;
-                    }
-                }
-
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({
-                        username,
-                        bio,
-                        avatar_url: avatar_url || null,
-                        banner_url: banner_url || null
-                    })
-                    .eq('id', profile.id);
-
-                if (error) {
-                    showToast('Error updating profile: ' + error.message, 'error');
-                } else {
-                    showToast('Profile updated successfully!', 'success');
-                    closeModal();
-                    if (currentUser && currentUser.id === profile.id) {
-                        currentUser.username = username;
-                        currentUser.bio = bio;
-                        currentUser.avatar_url = avatar_url;
-                        currentUser.banner_url = banner_url;
-                        updateAuthButtons();
-                    }
-                    navigate(`/user/${username}`);
-                }
-            });
-
-            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
-            document.getElementById('editProfileModal').addEventListener('click', (e) => {
-                if (e.target.id === 'editProfileModal') closeModal();
-            });
-        }
-
-        function closeModal() {
-            document.getElementById('modalContainer').innerHTML = '';
-        }
-
-        // Render functions
-        async function renderHome() {
-            const { data: pastes, error } = await supabase
-                .from('pastes')
-                .select('*, profiles(username, avatar_url, role)')
-                .order('created_at', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
-
-            const baseUrl = window.location.origin + window.location.pathname;
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-6">
-                    <div class="bg-secondary rounded-lg p-6 border border-custom">
-                        <div class="text-sm text-gray-400 mb-2 font-bold">Share text with everyone - Every paste gets a permanent link!</div>
-                        <div class="text-sm text-gray-500">Create a paste and share the URL with anyone. No login required to view.</div>
-                    </div>
-
-                    <div class="bg-secondary rounded-lg border border-custom">
-                        <div class="p-4 border-b border-custom flex justify-between items-center">
-                            <h2 class="font-semibold">Recent Public Pastes</h2>
-                            <span class="text-sm text-gray-500">${pastes?.length || 0} pastes</span>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-tertiary border-b border-custom">
-                                    <tr>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Title</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Views</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Created by</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Added</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Share</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${pastes?.length ? pastes.map(paste => `
-                                        <tr class="border-b border-custom hover:bg-tertiary">
-                                            <td class="p-4">
-                                                <a href="#/paste/${paste.id}" class="text-white hover:underline">${escapeHtml(paste.title)}</a>
-                                            </td>
-                                            <td class="p-4 text-gray-400">${paste.views || 0}</td>
-                                            <td class="p-4">
-                                                <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${escapeHtml(paste.profiles?.username) || 'Anonymous'}</a>
-                                            </td>
-                                            <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
-                                            <td class="p-4">
-                                                <button class="copy-btn share-paste-btn" data-url="${baseUrl}#/paste/${paste.id}">
-                                                    Copy Link
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('') : `
-                                        <tr>
-                                            <td colspan="5" class="p-4 text-center text-gray-400">No pastes yet. Be the first to create one!</td>
-                                        </tr>
-                                    `}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-secondary rounded-lg border border-custom p-6 text-center">
-                        <h3 class="text-lg font-bold mb-2">Want to share something?</h3>
-                        <p class="text-gray-400 mb-4">Create a paste and get a permanent link to share with everyone</p>
-                        <a href="#/add" class="btn btn-primary inline-block">Create a Paste</a>
-                    </div>
-                </div>
-            `;
-
-            document.querySelectorAll('.share-paste-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const url = btn.dataset.url;
-                    copyToClipboard(url);
-                });
-            });
-        }
-
-        async function renderAddPaste() {
-            if (!currentUser) {
-                showToast('Please login to create a paste', 'error');
-                window.location.hash = '#/login';
-                return;
-            }
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-2xl mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6">Create Shareable Paste</h2>
-                    
-                    <form id="pasteForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Title</label>
-                            <input type="text" id="pasteTitle" class="input" placeholder="My awesome paste" maxlength="100" required>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Content</label>
-                            <textarea id="pasteContent" rows="15" class="input font-mono" placeholder="Enter your text here... (supports code, plain text, anything)" required></textarea>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4">
-                            <button type="submit" class="btn btn-primary">Create Shareable Link</button>
-                            <button type="button" id="clearBtn" class="btn">Clear</button>
-                        </div>
-                        
-                        <p class="text-xs text-gray-500">Your paste will get a permanent link that anyone can view. Share it with the world!</p>
-                    </form>
-                </div>
-            `;
-
-            document.getElementById('pasteForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const title = document.getElementById('pasteTitle').value;
-                const content = document.getElementById('pasteContent').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
-                
-                const { data, error } = await supabase
-                    .from('pastes')
-                    .insert([
-                        { 
-                            title, 
-                            content, 
-                            user_id: currentUser.id,
-                            views: 0
-                        }
-                    ])
-                    .select()
-                    .single();
-
-                if (error) {
-                    showToast('Error creating paste: ' + error.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Shareable Link';
-                } else if (data) {
-                    showToast('Paste created! Share the link with everyone', 'success');
-                    window.location.hash = `#/paste/${data.id}`;
-                }
-            });
-
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                document.getElementById('pasteContent').value = '';
-            });
-        }
-
-        async function renderPaste(pasteId) {
-            const { data: paste, error } = await supabase
-                .from('pastes')
-                .select('*, profiles(username, avatar_url, role)')
-                .eq('id', pasteId)
-                .single();
-
-            if (error || !paste) {
-                showToast('Paste not found', 'error');
-                window.location.hash = '#/';
-                return;
-            }
-
-            await supabase
-                .from('pastes')
-                .update({ views: (paste.views || 0) + 1 })
-                .eq('id', pasteId);
-
-            const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}#/paste/${pasteId}`;
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-secondary rounded-lg border border-custom p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <h1 class="text-2xl font-bold">${escapeHtml(paste.title)}</h1>
-                            <button class="copy-btn" id="sharePasteBtn">
-                                Copy Link
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 text-sm text-gray-400 mb-4">
-                            <span>${(paste.views || 0) + 1} views</span>
-                            <span>•</span>
-                            <a href="#/user/${paste.profiles?.username}" class="text-white hover:underline">${escapeHtml(paste.profiles?.username) || 'Anonymous'}</a>
-                            <span>•</span>
-                            <span>${new Date(paste.created_at).toLocaleString()}</span>
-                        </div>
-
-                        <div class="share-url mb-4 flex justify-between items-center">
-                            <span class="truncate">${shareUrl}</span>
-                            <button class="copy-btn ml-2" id="copyUrlBtn">Copy</button>
-                        </div>
-                        
-                        <pre class="bg-tertiary p-4 rounded-md overflow-x-auto font-mono text-sm border border-custom whitespace-pre-wrap">${escapeHtml(paste.content)}</pre>
-                        
-                        <div class="mt-4 flex space-x-2">
-                            <button class="copy-btn" id="copyContentBtn">Copy Content</button>
-                            <a href="#/add" class="copy-btn">Create Your Own</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('sharePasteBtn')?.addEventListener('click', () => {
-                copyToClipboard(shareUrl);
-            });
-
-            document.getElementById('copyUrlBtn')?.addEventListener('click', () => {
-                copyToClipboard(shareUrl);
-            });
-
-            document.getElementById('copyContentBtn')?.addEventListener('click', () => {
-                copyToClipboard(paste.content);
-            });
-        }
-
-        async function renderUsers() {
-            const { data: users, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="bg-secondary rounded-lg border border-custom">
-                    <div class="p-4 border-b border-custom">
-                        <h2 class="text-xl font-bold">Users</h2>
-                        <p class="text-sm text-gray-500 mt-1">${users?.length || 0} users sharing content</p>
-                    </div>
-                    
-                    <div class="p-4 border-b border-custom">
-                        <input type="text" id="userSearch" placeholder="Search users..." class="input w-full md:w-64">
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-tertiary">
-                                <tr class="border-b border-custom">
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">User</th>
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">Pastes</th>
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">Joined</th>
-                                    <th class="text-left p-4 text-sm font-medium text-gray-400">Role</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                ${users?.map(user => `
-                                    <tr class="border-b border-custom hover:bg-tertiary">
-                                        <td class="p-4">
-                                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
-                                                ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
-                                                <span>${escapeHtml(user.username)}</span>
-                                            </a>
-                                        </td>
-                                        <td class="p-4">${user.paste_count || 0}</td>
-                                        <td class="p-4 text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
-                                        <td class="p-4">
-                                            <span class="badge">
-                                                ${user.role || 'User'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('userSearch')?.addEventListener('input', (e) => {
-                const search = e.target.value.toLowerCase();
-                const filtered = users?.filter(u => u.username.toLowerCase().includes(search));
-                const tbody = document.getElementById('usersTableBody');
-                tbody.innerHTML = filtered?.map(user => `
-                    <tr class="border-b border-custom hover:bg-tertiary">
-                        <td class="p-4">
-                            <a href="#/user/${user.username}" class="text-white hover:underline flex items-center space-x-2">
-                                ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-6 h-6 rounded-full border border-custom">` : ''}
-                                <span>${escapeHtml(user.username)}</span>
-                            </a>
-                        </td>
-                        <td class="p-4">${user.paste_count || 0}</td>
-                        <td class="p-4 text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
-                        <td class="p-4">
-                            <span class="badge">
-                                ${user.role || 'User'}
-                            </span>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="4" class="p-4 text-center text-gray-400">No users found</td></tr>';
-            });
-        }
-
-        async function renderUserProfile(username) {
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('username', username)
-                .single();
-
-            if (error || !profile) {
-                showToast('User not found', 'error');
-                window.location.hash = '#/users';
-                return;
-            }
-
-            const { data: pastes } = await supabase
-                .from('pastes')
-                .select('*')
-                .eq('user_id', profile.id)
-                .order('created_at', { ascending: false });
-
-            const isOwnProfile = currentUser?.id === profile.id;
-            const baseUrl = window.location.origin + window.location.pathname;
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="space-y-6">
-                    <div class="bg-secondary rounded-lg border border-custom overflow-hidden">
-                        <div class="h-32 bg-tertiary border-b border-custom relative">
-                            ${profile.banner_url ? 
-                                `<img src="${profile.banner_url}" class="w-full h-full object-cover">` : 
-                                '<div class="absolute inset-0 bg-gradient-to-b from-gray-800 to-gray-900"></div>'
-                            }
-                        </div>
-                        <div class="px-6 pb-6">
-                            <div class="flex items-end -mt-12 mb-4">
-                                <div class="w-24 h-24 rounded-full border-4 border-secondary overflow-hidden bg-tertiary">
-                                    ${profile.avatar_url ? 
-                                        `<img src="${profile.avatar_url}" class="w-full h-full object-cover">` : 
-                                        `<div class="w-full h-full flex items-center justify-center text-3xl font-bold bg-gray-700 text-white">${profile.username?.[0]?.toUpperCase()}</div>`
-                                    }
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <div class="flex items-center space-x-3">
-                                        <h1 class="text-2xl font-bold">${escapeHtml(profile.username)}</h1>
-                                        ${isOwnProfile ? `
-                                            <button id="editProfileBtn" class="btn text-sm py-1">Edit Profile</button>
-                                        ` : ''}
-                                    </div>
-                                    <p class="text-gray-400">Joined ${new Date(profile.created_at).toLocaleDateString()}</p>
-                                </div>
-                                ${profile.role ? `
-                                    <span class="badge">
-                                        ${profile.role}
-                                    </span>
-                                ` : ''}
-                            </div>
-                            
-                            ${profile.bio ? `<p class="text-gray-300 mb-4">${escapeHtml(profile.bio)}</p>` : ''}
-                            
-                            <div class="flex space-x-6 text-sm">
-                                <div><span class="font-bold">${profile.paste_count || 0}</span> <span class="text-gray-400">shared pastes</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-secondary rounded-lg border border-custom">
-                        <div class="p-4 border-b border-custom">
-                            <h2 class="font-semibold">Pastes shared by ${escapeHtml(profile.username)}</h2>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-tertiary border-b border-custom">
-                                    <tr>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Title</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Views</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Added</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-400">Share</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${pastes?.length ? pastes.map(paste => `
-                                        <tr class="border-b border-custom hover:bg-tertiary">
-                                            <td class="p-4">
-                                                <a href="#/paste/${paste.id}" class="text-white hover:underline">${escapeHtml(paste.title)}</a>
-                                            </td>
-                                            <td class="p-4 text-gray-400">${paste.views || 0}</td>
-                                            <td class="p-4 text-gray-400">${new Date(paste.created_at).toLocaleDateString()}</td>
-                                            <td class="p-4">
-                                                <button class="copy-btn share-paste-btn" data-url="${baseUrl}#/paste/${paste.id}">
-                                                    Copy Link
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('') : `
-                                        <tr>
-                                            <td colspan="4" class="p-4 text-center text-gray-400">No pastes shared yet</td>
-                                        </tr>
-                                    `}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            if (document.getElementById('editProfileBtn')) {
-                document.getElementById('editProfileBtn').addEventListener('click', () => {
-                    openEditProfileModal(profile);
-                });
-            }
-
-            document.querySelectorAll('.share-paste-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const url = btn.dataset.url;
-                    copyToClipboard(url);
-                });
-            });
-        }
-
-        function renderAbout() {
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="bg-secondary rounded-lg border border-custom p-6">
-                    <h1 class="text-2xl font-bold mb-4">About kittybin.lat</h1>
-                    
-                    <div class="space-y-4 text-gray-300">
-                        <p>kittybin.lat is a simple pastebin service where you can share text with everyone.</p>
-                        
-                        <div class="bg-tertiary p-4 rounded-lg border border-custom">
-                            <h2 class="font-bold text-lg mb-2">Features</h2>
-                            <ul class="list-disc list-inside space-y-1 text-gray-400">
-                                <li>Create permanent, shareable links for any text</li>
-                                <li>No login required to view pastes</li>
-                                <li>Every paste gets its own unique URL</li>
-                                <li>View counts on every paste</li>
-                                <li>User profiles to track your shared content</li>
-                                <li>Copy links and content with one click</li>
-                                <li>Customize your profile with avatar, banner, and bio</li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-tertiary p-4 rounded-lg border border-custom">
-                            <h2 class="font-bold text-lg mb-2">How to Share</h2>
-                            <ol class="list-decimal list-inside space-y-1 text-gray-400">
-                                <li>Create an account (or login)</li>
-                                <li>Click "Add Paste" and enter your content</li>
-                                <li>Get your permanent link</li>
-                                <li>Share the link with anyone!</li>
-                            </ol>
-                        </div>
-
-                        <p class="text-sm text-gray-500 mt-4">Every paste is publicly accessible. Share responsibly!</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderLogin() {
-            if (currentUser) {
-                window.location.hash = '#/';
-                return;
-            }
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-md mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6">Login to kittybin.lat</h2>
-                    
-                    <form id="loginForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Email</label>
-                            <input type="email" id="loginEmail" class="input" placeholder="meow@example.com" required>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Password</label>
-                            <input type="password" id="loginPassword" class="input" placeholder="••••••••" required>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-full">Login</button>
-                        
-                        <p class="text-sm text-gray-400 text-center">
-                            Don't have an account? <a href="#/signup" class="text-white hover:underline">Sign Up</a>
-                        </p>
-                    </form>
-                </div>
-            `;
-
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
-                
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-                if (error) {
-                    showToast('Login failed: ' + error.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Login';
-                } else {
-                    showToast('Login successful!', 'success');
-                    currentSession = data.session;
-                    currentUser = data.user;
-                    await loadUserProfile(data.user.id);
-                    window.location.hash = '#/';
-                }
-            });
-        }
-
-        function renderSignup() {
-            if (currentUser) {
-                window.location.hash = '#/';
-                return;
-            }
-
-            const app = document.getElementById('app');
-            app.innerHTML = `
-                <div class="max-w-md mx-auto bg-secondary rounded-lg border border-custom p-6">
-                    <h2 class="text-xl font-bold mb-6">Join kittybin.lat</h2>
-                    
-                    <form id="signupForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Username</label>
-                            <input type="text" id="signupUsername" class="input" placeholder="coolcat123" required minlength="3" maxlength="30">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Email</label>
-                            <input type="email" id="signupEmail" class="input" placeholder="meow@example.com" required>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Password</label>
-                            <input type="password" id="signupPassword" class="input" placeholder="••••••••" required minlength="6">
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-full">Sign Up</button>
-                        
-                        <p class="text-sm text-gray-400 text-center">
-                            Already have an account? <a href="#/login" class="text-white hover:underline">Login</a>
-                        </p>
-                    </form>
-                </div>
-            `;
-
-            document.getElementById('signupForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('signupUsername').value;
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                
-                const { data: existingUser } = await supabase
-                    .from('profiles')
-                    .select('username')
-                    .eq('username', username)
-                    .single();
-
-                if (existingUser) {
-                    showToast('Username already taken', 'error');
-                    return;
-                }
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<div class="loading mx-auto"></div>';
-                
-                const { data: authData, error: authError } = await supabase.auth.signUp({
-                    email,
-                    password
-                });
-
-                if (authError) {
-                    showToast('Signup failed: ' + authError.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Sign Up';
-                } else if (authData.user) {
-                    const { error: profileError } = await supabase.from('profiles').insert([
-                        { 
-                            id: authData.user.id, 
-                            username,
-                            role: 'User',
-                            paste_count: 0
-                        }
-                    ]);
-                    
-                    if (profileError) {
-                        console.error('Profile creation error:', profileError);
-                        showToast('Error creating profile: ' + profileError.message, 'error');
-                    } else {
-                        showToast('Signup successful! Please check your email for verification.', 'success');
-                    }
-                    
-                    window.location.hash = '#/login';
-                }
-            });
-        }
-
-        function escapeHtml(unsafe) {
-            if (!unsafe) return '';
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // Initialize
-        initAuth();
-    </script>
+<body class="text-gray-200 font-sans min-h-screen flex flex-col">
+
+<nav class="glass sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<a href="#/" class="text-xl font-extrabold tracking-tight">
+kittybin<span class="text-accent">.lat</span>
+</a>
+<div class="hidden md:flex items-center gap-6 text-sm">
+<a href="#/">Home</a>
+<a href="#/add">Create</a>
+<a href="#/users">Users</a>
+<a href="#/about">About</a>
+</div>
+<div id="authButtons" class="flex gap-3"></div>
+</div>
+</nav>
+
+<main class="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
+<div id="app"></div>
+</main>
+
+<footer class="glass mt-16">
+<div class="max-w-7xl mx-auto px-6 py-8 text-center text-sm text-gray-400">
+<p class="font-medium text-gray-300">kittybin.lat</p>
+<p class="mt-1">Permanent links. Zero nonsense.</p>
+<p class="mt-2 text-xs opacity-60">© 2026</p>
+</div>
+</footer>
+
+<div id="toastContainer" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+const supabase = createClient(
+'https://ylgtgecqhdhakzbjdkqq.supabase.co',
+'sb_publishable_ILF6pER_bdL8GppxOzfumg_xsDoMA6T'
+)
+
+let currentUser=null
+
+function showToast(msg){
+const t=document.createElement('div')
+t.className='toast'
+t.textContent=msg
+document.getElementById('toastContainer').appendChild(t)
+setTimeout(()=>t.remove(),3000)
+}
+
+function escapeHtml(str){
+if(!str) return ''
+return str.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+}
+
+function navigate(p){ window.location.hash='#'+p }
+function route(){ handleRoute() }
+window.addEventListener('hashchange',route)
+
+async function initAuth(){
+const {data:{session}}=await supabase.auth.getSession()
+if(session){ currentUser=session.user }
+updateAuth()
+handleRoute()
+}
+
+function updateAuth(){
+const div=document.getElementById('authButtons')
+if(currentUser){
+div.innerHTML=`<button id="logout" class="btn btn-secondary">Logout</button>`
+document.getElementById('logout').onclick=async()=>{
+await supabase.auth.signOut()
+currentUser=null
+updateAuth()
+navigate('/')
+}
+}else{
+div.innerHTML=`
+<a href="#/login" class="btn btn-secondary">Login</a>
+<a href="#/signup" class="btn btn-primary">Sign Up</a>`
+}
+}
+
+async function handleRoute(){
+const path=window.location.hash.slice(1)||'/'
+if(path==='/') renderHome()
+else if(path==='/add') renderAdd()
+else if(path.startsWith('/paste/')) renderPaste(path.split('/')[2])
+else if(path==='/users') renderUsers()
+else if(path.startsWith('/user/')) renderProfile(path.split('/')[2])
+else if(path==='/about') renderAbout()
+else if(path==='/login') renderLogin()
+else if(path==='/signup') renderSignup()
+else renderHome()
+}
+
+async function renderHome(){
+const {data}=await supabase.from('pastes').select('id,title,created_at,views').order('created_at',{ascending:false}).limit(20)
+document.getElementById('app').innerHTML=`
+<div class="space-y-8">
+<div class="card glass p-8 text-center">
+<h1 class="text-4xl font-bold mb-4">Share text instantly</h1>
+<p class="text-gray-400 mb-6">Permanent links. Clean UI. No nonsense.</p>
+<a href="#/add" class="btn btn-primary">Create Paste</a>
+</div>
+
+<div class="card glass p-6">
+<h2 class="text-xl font-semibold mb-4">Recent Pastes</h2>
+<table class="w-full text-sm">
+${data?.map(p=>`
+<tr class="table-row">
+<td class="py-3"><a href="#/paste/${p.id}" class="hover:underline">${escapeHtml(p.title)}</a></td>
+<td>${p.views||0} views</td>
+</tr>
+`).join('')||'<tr><td>No pastes yet</td></tr>'}
+</table>
+</div>
+</div>`
+}
+
+async function renderAdd(){
+if(!currentUser){ navigate('/login'); return }
+document.getElementById('app').innerHTML=`
+<div class="max-w-2xl mx-auto card glass p-8">
+<h2 class="text-xl font-bold mb-6">Create Paste</h2>
+<form id="pasteForm" class="space-y-4">
+<input id="title" placeholder="Title" class="input" required>
+<textarea id="content" rows="12" class="input font-mono" placeholder="Your content..." required></textarea>
+<button class="btn btn-primary">Create</button>
+</form>
+</div>`
+document.getElementById('pasteForm').onsubmit=async e=>{
+e.preventDefault()
+const title=title.value
+const content=content.value
+const {data,error}=await supabase.from('pastes').insert([{title,content,user_id:currentUser.id,views:0}]).select().single()
+if(error) showToast(error.message)
+else navigate('/paste/'+data.id)
+}
+}
+
+async function renderPaste(id){
+const {data}=await supabase.from('pastes').select('*').eq('id',id).single()
+if(!data){ showToast('Not found'); navigate('/'); return }
+await supabase.from('pastes').update({views:(data.views||0)+1}).eq('id',id)
+document.getElementById('app').innerHTML=`
+<div class="card glass p-8 space-y-6">
+<h1 class="text-2xl font-bold">${escapeHtml(data.title)}</h1>
+<p class="text-sm text-gray-400">${(data.views||0)+1} views</p>
+<pre class="bg-black/40 border border-white/10 p-6 rounded-xl overflow-x-auto text-sm font-mono whitespace-pre-wrap">${escapeHtml(data.content)}</pre>
+</div>`
+}
+
+async function renderUsers(){
+const {data}=await supabase.from('profiles').select('username')
+document.getElementById('app').innerHTML=`
+<div class="card glass p-8">
+<h2 class="text-xl font-bold mb-6">Users</h2>
+<ul class="space-y-2">
+${data?.map(u=>`<li><a href="#/user/${u.username}" class="hover:underline">${u.username}</a></li>`).join('')}
+</ul>
+</div>`
+}
+
+async function renderProfile(username){
+const {data}=await supabase.from('profiles').select('*').eq('username',username).single()
+if(!data){ showToast('User not found'); navigate('/users'); return }
+const {data:pastes}=await supabase.from('pastes').select('id,title').eq('user_id',data.id)
+document.getElementById('app').innerHTML=`
+<div class="space-y-8">
+<div class="card glass p-8">
+<h1 class="text-2xl font-bold">${data.username}</h1>
+</div>
+<div class="card glass p-6">
+<h2 class="font-semibold mb-4">Pastes</h2>
+<ul class="space-y-2">
+${pastes?.map(p=>`<li><a href="#/paste/${p.id}" class="hover:underline">${escapeHtml(p.title)}</a></li>`).join('')||'No pastes yet'}
+</ul>
+</div>
+</div>`
+}
+
+function renderAbout(){
+document.getElementById('app').innerHTML=`
+<div class="card glass p-8">
+<h1 class="text-2xl font-bold mb-4">About</h1>
+<p class="text-gray-400">kittybin.lat is a modern pastebin built with Supabase.</p>
+</div>`
+}
+
+function renderLogin(){
+document.getElementById('app').innerHTML=`
+<div class="max-w-md mx-auto card glass p-8">
+<h2 class="text-xl font-bold mb-6">Login</h2>
+<form id="loginForm" class="space-y-4">
+<input id="email" type="email" class="input" placeholder="Email" required>
+<input id="password" type="password" class="input" placeholder="Password" required>
+<button class="btn btn-primary w-full">Login</button>
+</form>
+</div>`
+document.getElementById('loginForm').onsubmit=async e=>{
+e.preventDefault()
+const {error}=await supabase.auth.signInWithPassword({email:email.value,password:password.value})
+if(error) showToast(error.message)
+else initAuth()
+}
+}
+
+function renderSignup(){
+document.getElementById('app').innerHTML=`
+<div class="max-w-md mx-auto card glass p-8">
+<h2 class="text-xl font-bold mb-6">Sign Up</h2>
+<form id="signupForm" class="space-y-4">
+<input id="email" type="email" class="input" placeholder="Email" required>
+<input id="password" type="password" class="input" placeholder="Password" required>
+<button class="btn btn-primary w-full">Sign Up</button>
+</form>
+</div>`
+document.getElementById('signupForm').onsubmit=async e=>{
+e.preventDefault()
+const {error}=await supabase.auth.signUp({email:email.value,password:password.value})
+if(error) showToast(error.message)
+else navigate('/login')
+}
+}
+
+initAuth()
+</script>
 </body>
 </html>
